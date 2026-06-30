@@ -1,0 +1,27 @@
+{
+  "name": "parvati-weed-thailand-bot",
+  "version": "1.0.0",
+  "description": "Premium cannabis delivery Telegram bot for Thailand",
+  "main": "bot_simple.js",
+  "scripts": {
+    "start": "node bot_simple.js",
+    "dev": "nodemon bot_simple.js"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "thailand",
+    "delivery",
+    "cannabis",
+    "weed",
+    "parvati"
+  ],
+  "author": "DrAndromeda",
+  "license": "MIT",
+  "dependencies": {
+    "telegraf": "^4.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}
