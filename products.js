@@ -20,8 +20,8 @@ const products = [
     effects_ru: ['😌 Расслабление', '😊 Счастье', '😴 Сон'],
     prices: {'1г': 300, '3г': 750, '5г': 1200, '10г': 2200, '50г': 9500},
     image: path.join(IMG_DIR, 'og-kush.jpg'),
-    desc_en: 'Legendary West Coast strain. A powerful hybrid that delivers a potent body high balanced with cerebral euphoria. Known for its distinct earthy pine and lemon aroma with notes of fuel.',
-    desc_ru: 'Легендарный сорт с Западного побережья. Мощный гибрид с сильным телесным эффектом и эйфорией. Отличается землисто-сосновым ароматом с нотками лимона.'
+    desc_en: 'Legendary West Coast strain. A powerful hybrid that delivers a potent body high balanced with cerebral euphoria. Known for its distinct earthy pine and lemon aroma with notes of fuel. Perfect for any time of day — social or solo.',
+    desc_ru: '🌿 Легендарный сорт с Западного побережья. Мощный гибрид с сильным телесным эффектом и эйфорией. Отличается землисто-сосновым ароматом с нотками лимона и дизеля. Подходит для любого времени суток. Один из самых продаваемых сортов в нашем каталоге!'
   },
   {
     id: 'f_amnesia', cat: 'flower',
@@ -31,8 +31,8 @@ const products = [
     effects_ru: ['⚡ Энергия', '🎨 Креатив', '☀️ Подъём'],
     prices: {'1г': 250, '3г': 600, '5г': 1000, '10г': 1800, '50г': 8000},
     image: path.join(IMG_DIR, 'amnesia-haze.jpg'),
-    desc_en: 'Award-winning sativa-dominant hybrid. Delivers an uplifting, energetic high perfect for daytime creativity and social activities. Citrus and earthy flavors with a hint of sweetness.',
-    desc_ru: 'Сатива-доминантный гибрид, победитель Cup. Бодрящий эффект, идеален для дня и творчества. Цитрусово-землистый вкус с ноткой сладости.'
+    desc_en: '🏆 Award-winning sativa-dominant hybrid. Delivers an uplifting, energetic high perfect for daytime creativity and social activities. Citrus and earthy flavors with a hint of sweetness. A true classic that never disappoints — great for morning or afternoon sessions.',
+    desc_ru: '🏆 Сатива-доминантный гибрид, многократный победитель Cannabis Cup. Бодрящий эффект, идеален для дня и творчества. Цитрусово-землистый вкус с ноткой сладости. Настоящая классика, которая никогда не разочаровывает. Отлично подходит для утренних и дневных сессий.'
   },
   {
     id: 'f_northern', cat: 'flower',
@@ -42,8 +42,8 @@ const products = [
     effects_ru: ['😴 Сон', '😌 Расслабление', '✨ Покалывание'],
     prices: {'1г': 200, '3г': 500, '5г': 800, '10г': 1500, '50г': 6500},
     image: path.join(IMG_DIR, 'northern-lights.jpg'),
-    desc_en: 'An all-time classic indica. Known for its heavy resin production and profoundly relaxing body effects. Sweet and spicy aroma with notes of pine and earth. Perfect for evenings.',
-    desc_ru: 'Классическая индика. Известна тяжёлым смолистым покрытием и глубоким расслаблением. Сладко-пряный аромат с сосновыми нотками. Идеальна для вечера.'
+    desc_en: '🌟 An all-time classic indica. Known for its heavy resin production and profoundly relaxing body effects. Sweet and spicy aroma with notes of pine and earth. Perfect for evenings and deep relaxation. Best value in our catalog!',
+    desc_ru: '🌟 Классическая индика, известная во всём мире. Тяжёлое смолистое покрытие и глубокое расслабление тела. Сладко-пряный аромат с сосновыми нотками. Идеальна для вечера и глубокого расслабления. Лучшая цена в нашем каталоге!'
   },
   {
     id: 'f_gelato', cat: 'flower',
@@ -53,8 +53,8 @@ const products = [
     effects_ru: ['🎨 Креатив', '💫 Эйфория', '😊 Счастье'],
     prices: {'1г': 350, '3г': 850, '5г': 1400, '10г': 2600, '50г': 11500},
     image: path.join(IMG_DIR, 'gelato33.jpg'),
-    desc_en: 'Premium dessert strain. Sweet vanilla and lavender aroma with a smooth, balanced high that starts euphoric and settles into deep relaxation. Top shelf quality.',
-    desc_ru: 'Премиум десертный сорт. Сладкий аромат ванили и лаванды. Сбалансированный эффект — от эйфории к глубокому расслаблению. Топ качество.'
+    desc_en: '🍨 Premium dessert strain — the legendary Gelato #33. Sweet vanilla and lavender aroma with a smooth, balanced high that starts euphoric and settles into deep relaxation. Top shelf quality, 5A grade. One of the most sought-after strains worldwide.',
+    desc_ru: '🍨 Премиум десертный сорт — легендарный Gelato #33. Сладкий аромат ванили и лаванды. Сбалансированный эффект — от эйфории к глубокому расслаблению. Топ качество, грейд 5A. Один из самых востребованных сортов в мире.'
   },
   {
     id: 'f_tropcherry', cat: 'flower',
@@ -64,8 +64,8 @@ const products = [
     effects_ru: ['🎯 Фокус', '💫 Эйфория', '⚡ Энергия'],
     prices: {'1г': 450, '3г': 1100, '5г': 1800, '10г': 3400, '50г': 15000},
     image: path.join(IMG_DIR, 'trop-cherry.jpg'),
-    desc_en: 'Exotic top-shelf exclusive. Bursting with cherry terpenes and tropical fruit notes. Potent sativa-leaning effects — focused, energetic, and creatively inspiring.',
-    desc_ru: 'Эксклюзивный топ-шельф. Взрыв вишнёвых терпенов и тропических фруктов. Мощная сатива — фокус, энергия, вдохновение.'
+    desc_en: '💎 Exotic top-shelf exclusive — our highest grade! Bursting with cherry terpenes and tropical fruit notes. Potent sativa-leaning effects — focused, energetic, and creatively inspiring. The crown jewel of our collection. Limited availability!',
+    desc_ru: '💎 Эксклюзивный топ-шельф — наш высший грейд! Взрыв вишнёвых терпенов и тропических фруктов. Мощная сатива — фокус, энергия, вдохновение. Жемчужина нашей коллекции. Ограниченная доступность!'
   },
 
   // ============ EDIBLES ============

@@ -40,9 +40,10 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS carts (
     chat_id INTEGER NOT NULL,
     product_id TEXT NOT NULL,
+    size TEXT DEFAULT '1г',
     qty INTEGER DEFAULT 1,
     added_at TEXT DEFAULT (datetime('now')),
-    PRIMARY KEY (chat_id, product_id)
+    PRIMARY KEY (chat_id, product_id, size)
   );
   CREATE TABLE IF NOT EXISTS orders (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,6 +51,7 @@ db.exec(`
     items TEXT NOT NULL,
     total INTEGER NOT NULL,
     delivery INTEGER DEFAULT 100,
+    region TEXT DEFAULT '',
     status TEXT DEFAULT 'new',
     contact TEXT DEFAULT '',
     address TEXT DEFAULT '',
@@ -69,15 +71,16 @@ function t(chatId, en, ru) {
 }
 
 function getCart(chatId) {
-  const rows = db.prepare('SELECT product_id, qty FROM carts WHERE chat_id = ?').all(chatId);
+  const rows = db.prepare('SELECT product_id, size, qty FROM carts WHERE chat_id = ?').all(chatId);
   return rows.map(r => {
     const p = products.find(pr => pr.id === r.product_id);
-    if (!p) return null;
-    const minPrice = Math.min(...Object.values(p.prices || {0: 0}));
+    if (!p || !p.prices) return null;
+    const price = p.prices[r.size] || Math.min(...Object.values(p.prices));
     return {
       product_id: r.product_id,
+      size: r.size,
       qty: r.qty,
-      price: minPrice,
+      price: price,
       name_ru: p.name_ru || p.name_en,
       name_en: p.name_en
     };
@@ -99,7 +102,7 @@ function formatCartText(chatId) {
     const name = lang === 'ru' ? i.name_ru : i.name_en;
     const itemTotal = i.price * i.qty;
     total += itemTotal;
-    text += `• ${name} × ${i.qty} = ${itemTotal}฿\n`;
+    text += `• ${name} (${i.size}) × ${i.qty} = ${itemTotal}฿\n`;
   });
   text += `\n💵 ${lang === 'ru' ? 'Товары' : 'Items'}: ${total}฿`;
   text += `\n🚚 ${lang === 'ru' ? 'Доставка' : 'Delivery'}: ${DELIVERY_FEE}฿`;
@@ -171,14 +174,21 @@ function categoryKeyboard(chatId) {
 
 function productKeyboard(p, chatId) {
   const l = getLang(chatId);
-  const minPrice = Math.min(...Object.values(p.prices || {0: 0}));
-  return Markup.inlineKeyboard([
-    [Markup.button.callback(`➕ ${l === 'ru' ? 'Добавить' : 'Add'} (${minPrice}฿)`, `add_${p.id}`)],
-    [
-      Markup.button.callback(l === 'ru' ? '🔙 Назад' : '🔙 Back', `cat_${p.cat}`),
-      Markup.button.callback(l === 'ru' ? '🛒 Корзина' : '🛒 Cart', 'cart')
-    ]
+  const sizes = Object.keys(p.prices || {});
+  // Size selection buttons
+  const sizeRow = sizes.map(s =>
+    Markup.button.callback(`${s} — ${p.prices[s].toLocaleString()}฿`, `size_${p.id}_${s}`)
+  );
+  // Split into rows of 3 max
+  const rows = [];
+  for (let i = 0; i < sizeRow.length; i += 3) {
+    rows.push(sizeRow.slice(i, i + 3));
+  }
+  rows.push([
+    Markup.button.callback(l === 'ru' ? '🔙 Назад' : '🔙 Back', `cat_${p.cat}`),
+    Markup.button.callback(l === 'ru' ? '🛒 Корзина' : '🛒 Cart', 'cart')
   ]);
+  return Markup.inlineKeyboard(rows);
 }
 
 function cartKeyboard(chatId) {
@@ -222,6 +232,18 @@ function paymentKeyboard(chatId) {
 const bot = new Telegraf(BOT_TOKEN);
 const answers = {}; // For session state (contact/address input)
 
+// ─── WELCOME IMAGE PATH ────────────────────────────────────────────────
+const WELCOME_IMG = path.join(__dirname, 'images', 'welcome.png');
+
+// ─── AGE VERIFICATION ──────────────────────────────────────────────────
+function ageVerificationKeyboard(chatId) {
+  const l = getLang(chatId);
+  return Markup.inlineKeyboard([
+    [Markup.button.callback(l === 'ru' ? '✅ Мне есть 18+' : '✅ I am 18+', 'age_confirm')],
+    [Markup.button.callback(l === 'ru' ? '🇬🇧 English' : '🇷🇺 Русский', 'change_lang')]
+  ]);
+}
+
 // ─── START ─────────────────────────────────────────────────────────────
 bot.start(async (ctx) => {
   const chatId = ctx.chat.id;
@@ -235,12 +257,40 @@ bot.start(async (ctx) => {
   // Remove old ReplyKeyboard
   await ctx.reply('👋', { reply_markup: { remove_keyboard: true } });
 
-  await ctx.reply(
-    getLang(chatId) === 'ru'
-      ? '🌿 *Добро пожаловать в Parvati!*\n\nВаш премиум сервис доставки в Таиланде 🏝️\n\n🏆 *Почему мы:*\n• Только топ качество (4A-5A+)\n• Анонимная доставка по всей стране\n• Оплата: QR / наличные / крипта\n• Поддержка 24/7\n\n👇 Начните с меню ниже:'
-      : '🌿 *Welcome to Parvati!*\n\nYour premium delivery service in Thailand 🏝️\n\n🏆 *Why us:*\n• Top quality only (4A-5A+)\n• Anonymous nationwide delivery\n• Payment: QR / cash / crypto\n• 24/7 support\n\n👇 Start with the menu below:',
-    { parse_mode: 'Markdown', reply_markup: mainMenuKeyboard(chatId).reply_markup }
-  );
+  // Send welcome image + age verification
+  const l = getLang(chatId);
+  const welcomeCaption = l === 'ru'
+    ? '🌿 *Parvati Weed Thailand*\n\n🏝️ Премиум сервис доставки по всему Таиланду\n\n⚠️ *Подтвердите, что вам есть 18+*'
+    : '🌿 *Parvati Weed Thailand*\n\n🏝️ Premium delivery service throughout Thailand\n\n⚠️ *Please confirm you are 18+*';
+
+  if (fs.existsSync(WELCOME_IMG)) {
+    await ctx.replyWithPhoto(
+      { source: WELCOME_IMG },
+      {
+        caption: welcomeCaption,
+        parse_mode: 'Markdown',
+        reply_markup: ageVerificationKeyboard(chatId).reply_markup
+      }
+    );
+  } else {
+    await ctx.reply('🌿 *Parvati Weed Thailand*', {
+      parse_mode: 'Markdown',
+      reply_markup: ageVerificationKeyboard(chatId).reply_markup
+    });
+  }
+});
+
+// ─── AGE CONFIRM ────────────────────────────────────────────────────────
+bot.action('age_confirm', async (ctx) => {
+  const chatId = ctx.chat.id;
+  const l = getLang(chatId);
+  const welcomeText = l === 'ru'
+    ? '🌿 *Добро пожаловать в Parvati!*\n\nВаш премиум сервис доставки в Таиланде 🏝️\n\n🏆 *Почему мы:*\n• Только топ грейды: 4A, 5A, 5A+ 💎\n• Анонимная доставка по всей стране 📦\n• Оплата: QR PromptPay / наличные / крипта 💳\n• Поддержка 24/7 — всегда на связи 📞\n• Низкие цены от 200฿ за грамм 🔥\n\n👇 Начните с меню:'
+    : '🌿 *Welcome to Parvati!*\n\nYour premium delivery service in Thailand 🏝️\n\n🏆 *Why us:*\n• Top grades only: 4A, 5A, 5A+ 💎\n• Anonymous nationwide delivery 📦\n• Payment: QR PromptPay / cash / crypto 💳\n• 24/7 support — always available 📞\n• Low prices from 200฿ per gram 🔥\n\n👇 Start with the menu:';
+  await ctx.editMessageCaption(welcomeText, {
+    parse_mode: 'Markdown',
+    reply_markup: mainMenuKeyboard(chatId).reply_markup
+  });
 });
 
 // ─── NAVIGATION ─────────────────────────────────────────────────────────
@@ -573,14 +623,40 @@ bot.action('delivery_info', async (ctx) => {
   const chatId = ctx.chat.id;
   const l = getLang(chatId);
   let text = l === 'ru'
-    ? '🚚 *Доставка Parvati*\n\n📍 *Регионы и стоимость:*'
-    : '🚚 *Parvati Delivery*\n\n📍 *Regions & pricing:*';
+    ? '🚚 *Доставка Parvati*\n\n' +
+      '━━━━━━━━━━━━━━━━━━━━\n\n' +
+      '📍 *Регионы и стоимость:*'
+    : '🚚 *Parvati Delivery*\n\n' +
+      '━━━━━━━━━━━━━━━━━━━━\n\n' +
+      '📍 *Regions & pricing:*';
   DELIVERY_REGIONS.forEach(r => {
     text += `\n${r.name_en} — ${r.price}฿ (${l === 'ru' ? r.time_ru : r.time_en})`;
   });
   text += l === 'ru'
-    ? '\n\n🛡️ *Гарантии:*\n• Анонимная упаковка\n• Фото трека\n• Замена при браке'
-    : '\n\n🛡️ *Guarantees:*\n• Anonymous packaging\n• Tracking photo\n• Replacement if defective';
+    ? '\n\n━━━━━━━━━━━━━━━━━━━━\n\n' +
+      '🛡️ *Наши гарантии:*\n' +
+      '• 📦 Анонимная вакуумная упаковка\n' +
+      '• 📸 Фото трека перед отправкой\n' +
+      '• 🔄 Замена при обнаружении брака\n' +
+      '• 🤫 Полная конфиденциальность\n' +
+      '• 💬 Поддержка на всех этапах\n\n' +
+      '🎯 *Почему выбирают нас:*\n' +
+      '• Низкие цены от 200฿/г\n' +
+      '• Доставка день в день по Бангкоку\n' +
+      '• Только топ грейды (4A, 5A, 5A+)\n' +
+      '• Работаем с 10:00 до 22:00 ежедневно'
+    : '\n\n━━━━━━━━━━━━━━━━━━━━\n\n' +
+      '🛡️ *Our guarantees:*\n' +
+      '• 📦 Anonymous vacuum packaging\n' +
+      '• 📸 Tracking photo before dispatch\n' +
+      '• 🔄 Replacement if defective\n' +
+      '• 🤫 Full confidentiality\n' +
+      '• 💬 Support at all stages\n\n' +
+      '🎯 *Why choose us:*\n' +
+      '• Low prices from 200฿/g\n' +
+      '• Same-day delivery in Bangkok\n' +
+      '• Top grades only (4A, 5A, 5A+)\n' +
+      '• Open daily 10:00-22:00';
   await ctx.editMessageText(text, {
     parse_mode: 'Markdown',
     reply_markup: mainMenuKeyboard(chatId).reply_markup
@@ -593,19 +669,55 @@ bot.action('faq', async (ctx) => {
   const l = getLang(chatId);
   const text = l === 'ru'
     ? '❓ *Часто задаваемые вопросы*\n\n' +
-      '🕐 *Как быстро доставка?*\nБангкок: 2-4ч · Остальные: 1-3 дня\n\n' +
-      '💳 *Способы оплаты?*\n🇹🇭 PromptPay QR + 💵 Кэш курьеру + ₿ USDT/BTC\n\n' +
-      '🆔 *Нужен ID?*\nДа, только 18+\n\n' +
-      '📦 *Как упаковано?*\nВакуум, без запаха\n\n' +
-      '📍 *Регионы?*\nВся страна: Бангкок, Пхукет, Самуи, Панган...\n\n' +
-      '🔄 *Возврат?*\nТолько если товар не соответствует заказу'
+      '━━━━━━━━━━━━━━━━━━━━\n\n' +
+      '🕐 *Как быстро доставка?*\n' +
+      'Бангкок и окрестности: 2-4 часа 🚕\n' +
+      'Пхукет, Самуи, Панган: 1-2 дня ⛴️\n' +
+      'Другие регионы: 1-3 дня 📦\n\n' +
+      '💳 *Какие способы оплаты?*\n' +
+      '🇹🇭 PromptPay QR — оплата через банк\n' +
+      '💵 Наличные курьеру при получении\n' +
+      '₿ Криптовалюта (USDT/BTC)\n\n' +
+      '🆔 *Нужен ли ID?*\n' +
+      'Да, обязательно 18+. Без исключений.\n' +
+      'Ваши данные конфиденциальны 🔒\n\n' +
+      '📦 *Как упакованы товары?*\n' +
+      'Вакуумная упаковка — 100% без запаха\n' +
+      'Дискретная доставка, без опознавательных знаков\n\n' +
+      '📍 *Куда доставляете?*\n' +
+      'Вся страна: Бангкок, Паттайя, Пхукет,\n' +
+      'Самуи, Панган, Чиангмай, Хуа Хин и другие\n\n' +
+      '🔄 *Возврат?*\n' +
+      'Только если товар не соответствует заказу.\n' +
+      'Фото дефекта обязательно для замены.\n\n' +
+      '🎁 *Есть скидки за объём?*\n' +
+      'Да! Чем больше берёте — тем ниже цена за грамм.\n' +
+      'Смотрите цены в карточках товаров 👇'
     : '❓ *Frequently Asked Questions*\n\n' +
-      '🕐 *Delivery time?*\nBangkok: 2-4h · Other: 1-3 days\n\n' +
-      '💳 *Payment methods?*\n🇹🇭 PromptPay QR + 💵 Cash + ₿ USDT/BTC\n\n' +
-      '🆔 *ID required?*\nYes, 18+ only\n\n' +
-      '📦 *Packaging?*\nVacuum sealed, odorless\n\n' +
-      '📍 *Regions?*\nNationwide: Bangkok, Phuket, Samui, Phangan...\n\n' +
-      '🔄 *Returns?*\nOnly if item doesn\'t match order';
+      '━━━━━━━━━━━━━━━━━━━━\n\n' +
+      '🕐 *Delivery time?*\n' +
+      'Bangkok & vicinity: 2-4 hours 🚕\n' +
+      'Phuket, Samui, Phangan: 1-2 days ⛴️\n' +
+      'Other regions: 1-3 days 📦\n\n' +
+      '💳 *Payment methods?*\n' +
+      '🇹🇭 PromptPay QR — bank transfer\n' +
+      '💵 Cash to courier on delivery\n' +
+      '₿ Crypto (USDT/BTC)\n\n' +
+      '🆔 *ID required?*\n' +
+      'Yes, strictly 18+. No exceptions.\n' +
+      'Your data is confidential 🔒\n\n' +
+      '📦 *How is it packaged?*\n' +
+      'Vacuum sealed — 100% odorless\n' +
+      'Discreet delivery, no markings\n\n' +
+      '📍 *Where do you deliver?*\n' +
+      'Nationwide: Bangkok, Pattaya, Phuket,\n' +
+      'Samui, Phangan, Chiang Mai, Hua Hin & more\n\n' +
+      '🔄 *Returns?*\n' +
+      'Only if item doesn\'t match order.\n' +
+      'Photo of defect required for replacement.\n\n' +
+      '🎁 *Bulk discounts?*\n' +
+      'Yes! The more you take — the lower the gram price.\n' +
+      'Check prices in product cards 👇';
   await ctx.editMessageText(text, {
     parse_mode: 'Markdown',
     reply_markup: mainMenuKeyboard(chatId).reply_markup
@@ -617,8 +729,24 @@ bot.action('support', async (ctx) => {
   const chatId = ctx.chat.id;
   const l = getLang(chatId);
   const text = l === 'ru'
-    ? '📞 *Поддержка Parvati*\n\nПо вопросам заказов, доставки и сотрудничества:\n👤 Менеджер: @dr_Andromeda\n\n📱 Или просто напишите сюда — ответим в ближайшее время!\n\n🕐 Работаем ежедневно 10:00-22:00'
-    : '📞 *Parvati Support*\n\nFor orders, delivery and partnerships:\n👤 Manager: @dr_Andromeda\n\n📱 Or just write here — we\'ll respond shortly!\n\n🕐 Working daily 10:00-22:00';
+    ? '📞 *Поддержка Parvati*\n\n' +
+      'По вопросам заказов, доставки и сотрудничества:\n\n' +
+      '👤 *Менеджер:* @dr_Andromeda\n' +
+      '📱 *Telegram:* @Parvati_WeedThiBot\n\n' +
+      '💬 Или просто напишите сюда — ответим в ближайшее время!\n\n' +
+      '🕐 *Режим работы:*\n' +
+      'Ежедневно 10:00-22:00 (ICT, GMT+7)\n\n' +
+      '⏰ *В нерабочее время:*\n' +
+      'Оставьте сообщение — ответим с утра'
+    : '📞 *Parvati Support*\n\n' +
+      'For orders, delivery and partnerships:\n\n' +
+      '👤 *Manager:* @dr_Andromeda\n' +
+      '📱 *Telegram:* @Parvati_WeedThiBot\n\n' +
+      '💬 Or just write here — we\'ll respond shortly!\n\n' +
+      '🕐 *Working hours:*\n' +
+      'Daily 10:00-22:00 (ICT, GMT+7)\n\n' +
+      '⏰ *After hours:*\n' +
+      'Leave a message — we\'ll reply in the morning';
   await ctx.editMessageText(text, {
     parse_mode: 'Markdown',
     reply_markup: mainMenuKeyboard(chatId).reply_markup
@@ -631,23 +759,41 @@ bot.action('about', async (ctx) => {
   const l = getLang(chatId);
   const text = l === 'ru'
     ? 'ℹ️ *О Parvati Weed Thailand*\n\n' +
-      '🏝️ Премиум сервис доставки на Koh Phangan и по всему Таиланду.\n\n' +
+      '🏝️ *Кто мы*\n' +
+      'Parvati — премиум сервис доставки каннабиса и кратома по всему Таиланду.\n' +
+      'Работаем с 2024 года, тысячи довольных клиентов.\n\n' +
       '🏆 *Наши стандарты:*\n' +
-      '• Только топ грейды: 4A, 5A, 5A+\n' +
-      '• Свежий импорт из USA и Cali\n' +
-      '• Анонимная вакуумная упаковка\n' +
-      '• Быстрая доставка по всей стране\n' +
-      '• Поддержка 24/7 в рабочее время\n\n' +
-      '🤝 *Cвязаны с Cafe 13* — культовым местом на Koh Phangan 🍃☕'
+      '• 💎 Только топ грейды: 4A, 5A, 5A+\n' +
+      '• ✈️ Свежий импорт из USA и Cali\n' +
+      '• 📦 Анонимная вакуумная упаковка — без запаха\n' +
+      '• 🚚 Быстрая доставка по всей стране\n' +
+      '• 🔒 Полная конфиденциальность\n' +
+      '• 📞 Поддержка 24/7 в рабочее время\n\n' +
+      '🎯 *Наша миссия:*\n' +
+      'Сделать качественный каннабис доступным для каждого в Таиланде — быстро, безопасно и дискретно.\n\n' +
+      '🤝 *Партнёры:*\n' +
+      'Связаны с Cafe 13 — культовым местом на Koh Phangan 🍃☕\n' +
+      'Сотрудничаем с ведущими импортёрами USA и Cali strains.\n\n' +
+      '📍 *Базовый регион:* Koh Phangan, Surat Thani\n' +
+      '🌍 *Доставка:* Вся страна'
     : 'ℹ️ *About Parvati Weed Thailand*\n\n' +
-      '🏝️ Premium delivery service on Koh Phangan and throughout Thailand.\n\n' +
-      '🏆 *Our standards:*\n' +
-      '• Top grades only: 4A, 5A, 5A+\n' +
-      '• Fresh import from USA and Cali\n' +
-      '• Anonymous vacuum packaging\n' +
-      '• Fast nationwide delivery\n' +
-      '• 24/7 support during working hours\n\n' +
-      '🤝 *Affiliated with Cafe 13* — iconic spot on Koh Phangan 🍃☕';
+      '🏝️ *Who We Are*\n' +
+      'Parvati — premium cannabis and kratom delivery service throughout Thailand.\n' +
+      'Operating since 2024, thousands of satisfied customers.\n\n' +
+      '🏆 *Our Standards:*\n' +
+      '• 💎 Top grades only: 4A, 5A, 5A+\n' +
+      '• ✈️ Fresh import from USA and Cali\n' +
+      '• 📦 Anonymous vacuum packaging — odorless\n' +
+      '• 🚚 Fast nationwide delivery\n' +
+      '• 🔒 Full confidentiality\n' +
+      '• 📞 24/7 support during working hours\n\n' +
+      '🎯 *Our Mission:*\n' +
+      'Making quality cannabis accessible to everyone in Thailand — fast, safe, and discreet.\n\n' +
+      '🤝 *Partners:*\n' +
+      'Affiliated with Cafe 13 — iconic spot on Koh Phangan 🍃☕\n' +
+      'Working with leading USA and Cali importers.\n\n' +
+      '📍 *Base region:* Koh Phangan, Surat Thani\n' +
+      '🌍 *Delivery:* Nationwide';
   await ctx.editMessageText(text, {
     parse_mode: 'Markdown',
     reply_markup: mainMenuKeyboard(chatId).reply_markup
@@ -660,29 +806,47 @@ bot.action('howto', async (ctx) => {
   const l = getLang(chatId);
   const text = l === 'ru'
     ? '📖 *Как сделать заказ:*\n\n' +
-      '1️⃣ Нажмите 🛍️ *Магазин*\n' +
-      '2️⃣ Выберите категорию (Шишки/Эдиблс/и т.д.)\n' +
-      '3️⃣ Нажмите на товар → увидите описание и цены\n' +
+      '━━━━━━━━━━━━━━━━━━━━\n\n' +
+      '1️⃣ Зайдите в 🛍️ *Магазин*\n' +
+      '2️⃣ Выберите категорию: 🌿 Шишки, 🍪 Эдиблс, 🚬 Косяки...\n' +
+      '3️⃣ Нажмите на товар → изучите описание и цены\n' +
       '4️⃣ Нажмите ➕ *Добавить* — товар в корзине\n' +
       '5️⃣ Повторите для других товаров\n' +
-      '6️⃣ Зайдите в 🛒 *Корзину* → проверьте заказ\n' +
+      '6️⃣ Зайдите в 🛒 *Корзину* → проверьте состав\n' +
       '7️⃣ Нажмите ✅ *Оформить заказ*\n' +
-      '8️⃣ Выберите способ оплаты\n' +
-      '9️⃣ Введите контакт и адрес доставки\n' +
-      '🔟 Готово! Мы свяжемся с вами для подтверждения ✅\n\n' +
-      '💳 *Оплата:* QR PromptPay / наличные / крипта'
+      '8️⃣ Выберите способ оплаты 💳\n' +
+      '9️⃣ Введите контакт (телефон/Telegram)\n' +
+      '🔟 Введите адрес доставки 📍\n' +
+      '━━━━━━━━━━━━━━━━━━━━\n' +
+      '✅ Готово! Мы свяжемся для подтверждения\n\n' +
+      '💡 *Подсказка:*\n' +
+      'Хотите несколько товаров? Собирайте корзину\n' +
+      'как в интернет-магазине — всё в одном заказе!\n\n' +
+      '💳 *Способы оплаты:*\n' +
+      '🇹🇭 PromptPay QR\n' +
+      '💵 Наличные курьеру\n' +
+      '₿ Криптовалюта (USDT/BTC)'
     : '📖 *How to Order:*\n\n' +
+      '━━━━━━━━━━━━━━━━━━━━\n\n' +
       '1️⃣ Tap 🛍️ *Shop*\n' +
-      '2️⃣ Choose category (Flower/Edibles/etc)\n' +
-      '3️⃣ Tap a product → see description & prices\n' +
+      '2️⃣ Choose category: 🌿 Flower, 🍪 Edibles, 🚬 Pre-rolls...\n' +
+      '3️⃣ Tap product → see description & prices\n' +
       '4️⃣ Tap ➕ *Add* — item in cart\n' +
       '5️⃣ Repeat for other items\n' +
       '6️⃣ Go to 🛒 *Cart* → review your order\n' +
       '7️⃣ Tap ✅ *Checkout*\n' +
-      '8️⃣ Choose payment method\n' +
-      '9️⃣ Enter contact and delivery address\n' +
-      '🔟 Done! We\'ll contact you for confirmation ✅\n\n' +
-      '💳 *Payment:* QR PromptPay / cash / crypto';
+      '8️⃣ Choose payment method 💳\n' +
+      '9️⃣ Enter contact (phone/Telegram)\n' +
+      '🔟 Enter delivery address 📍\n' +
+      '━━━━━━━━━━━━━━━━━━━━\n' +
+      '✅ Done! We\'ll contact to confirm\n\n' +
+      '💡 *Tip:*\n' +
+      'Want multiple items? Build your cart\n' +
+      'like an online store — all in one order!\n\n' +
+      '💳 *Payment methods:*\n' +
+      '🇹🇭 PromptPay QR\n' +
+      '💵 Cash to courier\n' +
+      '₿ Crypto (USDT/BTC)';
   await ctx.editMessageText(text, {
     parse_mode: 'Markdown',
     reply_markup: mainMenuKeyboard(chatId).reply_markup
