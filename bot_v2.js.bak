@@ -234,8 +234,8 @@ categories.forEach(cat => {
     let text = `${catName}\n\n`;
     const buts = catProducts.map(p => {
       const pName = l === 'ru' ? p.name_ru : p.name_en;
-      text += `• *${pName}* — ${Math.min(...Object.values(p.prices || {0:0}))}฿\n`;
-      return [Markup.button.callback(`${pName} — ${Math.min(...Object.values(p.prices || {0:0}))}฿`, `view_${p.id}`)];
+      text += `• *${pName}* — ${p.price}฿\n`;
+      return [Markup.button.callback(`${pName} — ${p.price}฿`, `view_${p.id}`)];
     });
     buts.push([Markup.button.callback(l === 'ru' ? '🔙 Назад' : '🔙 Back', 'shop')]);
 
@@ -522,12 +522,6 @@ bot.action('delivery_info', async (ctx) => {
   );
 });
 
-bot.catch((err, ctx) => {
-  console.error("Bot error:", err.message);
-  try {
-    ctx.telegram.sendMessage(ADMIN_ID, "⚠️ Bot error: " + err.message.substring(0, 200));
-  } catch(e) {}
-});
 // ─── LAUNCH ──────────────────────────────────────────────────────────────
 if (!BOT_TOKEN) {
   console.error('❌ BOT_TOKEN not set');
