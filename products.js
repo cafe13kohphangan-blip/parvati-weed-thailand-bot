@@ -18,7 +18,7 @@ const products = [
     grade: '4A', type: 'Hybrid', thc: '22-26%',
     effects_en: ['😌 Relaxed', '😊 Happy', '😴 Sleepy'],
     effects_ru: ['😌 Расслабление', '😊 Счастье', '😴 Сон'],
-    prices: { '1г': 300, '3.5г': 850, '7г': 1500 },
+    prices: {'1г': 300, '3г': 750, '5г': 1200, '10г': 2200, '50г': 9500},
     image: path.join(IMG_DIR, 'og-kush.jpg'),
     desc_en: 'Legendary West Coast strain. A powerful hybrid that delivers a potent body high balanced with cerebral euphoria. Known for its distinct earthy pine and lemon aroma with notes of fuel.',
     desc_ru: 'Легендарный сорт с Западного побережья. Мощный гибрид с сильным телесным эффектом и эйфорией. Отличается землисто-сосновым ароматом с нотками лимона.'
@@ -29,7 +29,7 @@ const products = [
     grade: '4A', type: 'Sativa 70%', thc: '20-25%',
     effects_en: ['⚡ Energetic', '🎨 Creative', '☀️ Uplifted'],
     effects_ru: ['⚡ Энергия', '🎨 Креатив', '☀️ Подъём'],
-    prices: { '1г': 250, '3.5г': 700, '7г': 1300 },
+    prices: {'1г': 250, '3г': 600, '5г': 1000, '10г': 1800, '50г': 8000},
     image: path.join(IMG_DIR, 'amnesia-haze.jpg'),
     desc_en: 'Award-winning sativa-dominant hybrid. Delivers an uplifting, energetic high perfect for daytime creativity and social activities. Citrus and earthy flavors with a hint of sweetness.',
     desc_ru: 'Сатива-доминантный гибрид, победитель Cup. Бодрящий эффект, идеален для дня и творчества. Цитрусово-землистый вкус с ноткой сладости.'
@@ -40,7 +40,7 @@ const products = [
     grade: '4A', type: 'Indica 80%', thc: '18-22%',
     effects_en: ['😴 Sleepy', '😌 Relaxed', '✨ Tingly'],
     effects_ru: ['😴 Сон', '😌 Расслабление', '✨ Покалывание'],
-    prices: { '1г': 200, '3.5г': 550, '7г': 1000 },
+    prices: {'1г': 200, '3г': 500, '5г': 800, '10г': 1500, '50г': 6500},
     image: path.join(IMG_DIR, 'northern-lights.jpg'),
     desc_en: 'An all-time classic indica. Known for its heavy resin production and profoundly relaxing body effects. Sweet and spicy aroma with notes of pine and earth. Perfect for evenings.',
     desc_ru: 'Классическая индика. Известна тяжёлым смолистым покрытием и глубоким расслаблением. Сладко-пряный аромат с сосновыми нотками. Идеальна для вечера.'
@@ -51,7 +51,7 @@ const products = [
     grade: '5A', type: 'Hybrid', thc: '24-28%',
     effects_en: ['🎨 Creative', '💫 Euphoric', '😊 Happy'],
     effects_ru: ['🎨 Креатив', '💫 Эйфория', '😊 Счастье'],
-    prices: { '1г': 350, '3.5г': 950, '7г': 1700 },
+    prices: {'1г': 350, '3г': 850, '5г': 1400, '10г': 2600, '50г': 11500},
     image: path.join(IMG_DIR, 'gelato33.jpg'),
     desc_en: 'Premium dessert strain. Sweet vanilla and lavender aroma with a smooth, balanced high that starts euphoric and settles into deep relaxation. Top shelf quality.',
     desc_ru: 'Премиум десертный сорт. Сладкий аромат ванили и лаванды. Сбалансированный эффект — от эйфории к глубокому расслаблению. Топ качество.'
@@ -62,7 +62,7 @@ const products = [
     grade: '5A+', type: 'Sativa 60%', thc: '25-28%',
     effects_en: ['🎯 Focused', '💫 Euphoric', '⚡ Energetic'],
     effects_ru: ['🎯 Фокус', '💫 Эйфория', '⚡ Энергия'],
-    prices: { '1г': 450, '3.5г': 1300, '7г': 2300 },
+    prices: {'1г': 450, '3г': 1100, '5г': 1800, '10г': 3400, '50г': 15000},
     image: path.join(IMG_DIR, 'trop-cherry.jpg'),
     desc_en: 'Exotic top-shelf exclusive. Bursting with cherry terpenes and tropical fruit notes. Potent sativa-leaning effects — focused, energetic, and creatively inspiring.',
     desc_ru: 'Эксклюзивный топ-шельф. Взрыв вишнёвых терпенов и тропических фруктов. Мощная сатива — фокус, энергия, вдохновение.'
@@ -75,7 +75,7 @@ const products = [
     grade: 'A', type: 'Edible', thc: '100mg THC',
     effects_en: ['🫠 Body High', '😌 Relaxed'],
     effects_ru: ['🫠 Телесный', '😌 Расслабление'],
-    prices: { '10шт': 350 },
+    prices: { '5шт': 200, '10шт': 350, '25шт': 800, '50шт': 1500 },
     image: path.join(IMG_DIR, 'gummy.jpg'),
     desc_en: 'Delicious fruity gummy bears. 10 pieces × 10mg THC each. Perfect for microdosing or a gentle introduction to edibles. Vegan friendly.',
     desc_ru: 'Вкусные фруктовые мармеладки. 10 шт × 10мг ТГК. Идеально для микродозинга или первого знакомства с эдиблс. Веганские.'
@@ -86,7 +86,7 @@ const products = [
     grade: 'A', type: 'Edible', thc: '200mg THC',
     effects_en: ['🫠 Heavy Body', '😴 Sleepy'],
     effects_ru: ['🫠 Тяжёлый', '😴 Сон'],
-    prices: { '1шт': 400 },
+    prices: { '1шт': 400, '3шт': 1100, '5шт': 1700, '10шт': 3200 },
     image: path.join(IMG_DIR, 'brownie.jpg'),
     desc_en: 'Premium Belgian chocolate brownie. Rich, fudgy, and potent. 200mg THC for a long-lasting, deeply relaxing experience. For experienced consumers.',
     desc_ru: 'Брауни из бельгийского шоколада. Богатый, сочный, мощный. 200мг ТГК для долгого глубокого расслабления. Для опытных.'
@@ -97,7 +97,7 @@ const products = [
     grade: 'A', type: 'Edible', thc: '250mg THC',
     effects_en: ['🫠 Heavy Body', '💫 Euphoric'],
     effects_ru: ['🫠 Тяжёлый', '💫 Эйфория'],
-    prices: { '25шт': 600 },
+    prices: { '5шт': 150, '10шт': 280, '25шт': 600, '50шт': 1100 },
     image: path.join(IMG_DIR, 'gummy.jpg'),
     desc_en: 'Strong fruit gummy bears. 25 pieces × 10mg THC for a powerful, long-lasting experience. Best shared or for experienced users only.',
     desc_ru: 'Сильные фруктовые мармеладки. 25 шт × 10мг ТГК. Мощный эффект. Лучше делить или для опытных.'
@@ -111,7 +111,7 @@ const products = [
     grade: '3A', type: 'Joint', thc: '18-22%',
     effects_en: ['😌 Relaxed', '😊 Happy'],
     effects_ru: ['😌 Расслабление', '😊 Счастье'],
-    prices: { '1шт': 100, '5шт': 450 },
+    prices: { '1шт': 100, '3шт': 280, '5шт': 450, '10шт': 850 },
     image: path.join(IMG_DIR, 'preroll-pack.jpg'),
     desc_en: 'Ready-to-smoke mixed strain joint with glass tip. Smooth burn, consistent quality. Perfect for on-the-go.',
     desc_ru: 'Готовый косяк из микс сортов со стеклянным наконечником. Ровное горение. Идеален для прогулки.'
@@ -122,7 +122,7 @@ const products = [
     grade: '4A', type: 'Joint', thc: '22-26%',
     effects_en: ['💫 Euphoric', '🫠 Body High'],
     effects_ru: ['💫 Эйфория', '🫠 Телесный'],
-    prices: { '1шт': 200, '5шт': 900 },
+    prices: {'1шт': 350, '3шт': 950, '5шт': 1500, '10шт': 2800},
     image: path.join(IMG_DIR, 'preroll-premium.jpg'),
     desc_en: 'King size premium joint. Top shelf flower, organic paper, glass tip. The ultimate ready-to-smoke experience.',
     desc_ru: 'Кинг сайз премиум косяк. Топ сорт, органическая бумага, стеклянный наконечник. Лучший готовый джоинт.'
@@ -135,7 +135,7 @@ const products = [
     grade: '4A', type: 'Kratom', thc: 'Mitragynine',
     effects_en: ['⚡ Energy', '🎯 Focus', '😌 Relaxed'],
     effects_ru: ['⚡ Энергия', '🎯 Фокус', '😌 Расслабление'],
-    prices: { '50г': 300, '100г': 500, '500г': 2000 },
+    prices: { '25г': 200, '50г': 350, '100г': 600, '250г': 1300, '500г': 2200, '1кг': 4000 },
     image: path.join(IMG_DIR, 'kratom-powder.jpg'),
     desc_en: 'Premium Thai kratom powder. Available in Red, White, and Green vein strains. Lab tested for purity and alkaloid content.',
     desc_ru: 'Премиум тайский порошок кратом. Красный, Белый, Зелёный сорта. Лабораторное тестирование.'
@@ -146,7 +146,7 @@ const products = [
     grade: '4A', type: 'Kratom', thc: 'Mitragynine',
     effects_en: ['⚡ Energy', '😊 Mood Boost'],
     effects_ru: ['⚡ Энергия', '😊 Настроение'],
-    prices: { '30шт': 450, '100шт': 1200 },
+    prices: { '30шт': 450, '60шт': 800, '100шт': 1200, '200шт': 2200 },
     image: path.join(IMG_DIR, 'kratom-caps.jpg'),
     desc_en: 'Convenient pre-measured kratom capsules. 500mg each. Easy to take anywhere — no measuring, no taste.',
     desc_ru: 'Удобные капсулы кратома. По 500мг каждая. Легко принять где угодно — без вкуса и измерения.'
@@ -158,7 +158,7 @@ const products = [
     name_en: 'Rolling Papers 📄 (50)', name_ru: 'Бумаги 📄 (50)',
     grade: 'A', type: 'Accessory', thc: null,
     effects_en: [], effects_ru: [],
-    prices: { '1пачка': 50 },
+    prices: { '1пачка': 50, '3пачки': 130, '5пачек': 200, '10пачек': 350 },
     image: path.join(IMG_DIR, 'papers.jpg'),
     desc_en: 'King size organic hemp rolling papers. Slow, even burn. No added chemicals. 50 per pack.',
     desc_ru: 'Кинг сайз бумаги из органической конопли. Медленное ровное горение. Без химии. 50 шт.'
@@ -168,7 +168,7 @@ const products = [
     name_en: 'Metal Grinder 🔧 4-pc', name_ru: 'Грайндер 🔧 4-ч',
     grade: 'A', type: 'Accessory', thc: null,
     effects_en: [], effects_ru: [],
-    prices: { '1шт': 350 },
+    prices: { '1шт': 500, '2шт': 900, '5шт': 2000 },
     image: path.join(IMG_DIR, 'grinder.jpg'),
     desc_en: 'Premium 4-piece aluminum grinder. Magnetic lid, sharp teeth, fine mesh screen, and keef catcher. 50mm diameter.',
     desc_ru: 'Премиум 4-частный алюминиевый грайндер. Магнитная крышка, острые зубья, мелкая сетка, сборщик кифа. 50мм.'
@@ -179,7 +179,7 @@ const products = [
     grade: '4A', type: 'Hybrid', thc: '22-26%',
     effects_en: ['😌 Relaxed', '💫 Euphoric', '😊 Happy'],
     effects_ru: ['😌 Расслабление', '💫 Эйфория', '😊 Счастье'],
-    prices: { '1г': 350, '3.5г': 950, '7г': 1700 },
+    prices: {'1г': 350, '3г': 850, '5г': 1400, '10г': 2600, '50г': 11500},
     image: path.join(IMG_DIR, 'doubleck.jpg'),
     desc_en: 'Premium hybrid strain. Balanced effects — relaxing body high with euphoric cerebral uplift.',
     desc_ru: 'Премиум гибрид. Сбалансированный эффект — расслабление тела с эйфорией.'
