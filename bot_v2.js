@@ -1,4 +1,4 @@
-// Parvati Weed Thailand - Premium v2.7 (Promos + Reviews + Thai + SQLite + Inline)
+// Parvati Service - Premium v2.7 (Promos + Reviews + Thai + SQLite + Inline)
 const { Telegraf, Markup } = require('telegraf');
 const { categories, products } = require('./products');
 const { DatabaseSync } = require('node:sqlite');
@@ -395,10 +395,10 @@ bot.start(async (ctx) => {
   // Send welcome image + age verification
   const l = getLang(chatId);
   const welcomeCaption = l === 'th'
-    ? '🌿 *Parvati Weed Thailand*\n\n🏝️ บริการจัดส่งพรีเมียมทั่วประเทศไทย\n\n⚠️ *กรุณายืนยันว่าคุณอายุ 18 ปีขึ้นไป*'
+    ? '🌿 *Parvati Service*\n\n🏝️ บริการจัดส่งพรีเมียมทั่วประเทศไทย\n\n⚠️ *กรุณายืนยันว่าคุณอายุ 18 ปีขึ้นไป*'
     : l === 'en'
-      ? '🌿 *Parvati Weed Thailand*\n\n🏝️ Premium delivery service throughout Thailand\n\n⚠️ *Please confirm you are 18+*'
-      : '🌿 *Parvati Weed Thailand*\n\n🏝️ Премиум сервис доставки по всему Таиланду\n\n⚠️ *Подтвердите, что вам есть 18+*';
+      ? '🌿 *Parvati Service*\n\n🏝️ Premium delivery service throughout Thailand\n\n⚠️ *Please confirm you are 18+*'
+      : '🌿 *Parvati Service*\n\n🏝️ Премиум сервис доставки по всему Таиланду\n\n⚠️ *Подтвердите, что вам есть 18+*';
 
   if (fs.existsSync(WELCOME_IMG)) {
     await ctx.replyWithPhoto(
@@ -410,7 +410,7 @@ bot.start(async (ctx) => {
       }
     );
   } else {
-    await ctx.reply('🌿 *Parvati Weed Thailand*', {
+    await ctx.reply('🌿 *Parvati Service*', {
       parse_mode: 'Markdown',
       reply_markup: ageVerificationKeyboard(chatId).reply_markup
     });
@@ -437,7 +437,7 @@ bot.action('age_confirm', async (ctx) => {
 // ─── NAVIGATION ─────────────────────────────────────────────────────────
 bot.action('back_main', async (ctx) => {
   const chatId = ctx.chat.id;
-  await ctx.editMessageText('🌿 *Parvati Weed Thailand*', {
+  await ctx.editMessageText('🌿 *Parvati Service*', {
     parse_mode: 'Markdown',
     reply_markup: mainMenuKeyboard(chatId).reply_markup
   });
@@ -448,7 +448,7 @@ bot.action('change_lang', async (ctx) => {
   const current = getLang(chatId);
   const nextLang = current === 'ru' ? 'en' : current === 'en' ? 'th' : 'ru';
   db.prepare('UPDATE users SET lang = ? WHERE chat_id = ?').run(nextLang, chatId);
-  await ctx.editMessageText('🌿 *Parvati Weed Thailand*', {
+  await ctx.editMessageText('🌿 *Parvati Service*', {
     parse_mode: 'Markdown',
     reply_markup: mainMenuKeyboard(chatId).reply_markup
   });
@@ -481,9 +481,9 @@ categories.forEach(cat => {
 
     let text = `${catName}\n\n`;
     const buts = catProducts.map(p => {
-      const pName = pName(p, l);
-      text += `• *${pName}* — ${Math.min(...Object.values(p.prices || {0: 0}))}฿\n`;
-      return [Markup.button.callback(`${pName} — ${Math.min(...Object.values(p.prices || {0: 0}))}฿`, `view_${p.id}`)];
+      const pn = pName(p, l);
+      text += `• *${pn}* — ${Math.min(...Object.values(p.prices || {0: 0}))}฿\n`;
+      return [Markup.button.callback(`${pn} — ${Math.min(...Object.values(p.prices || {0: 0}))}฿`, `view_${p.id}`)];
     });
     buts.push([Markup.button.callback(l === 'th' ? '🔙 กลับ' : (l === 'ru' ? '🔙 Назад' : '🔙 Back'), 'shop')]);
 
@@ -859,10 +859,10 @@ bot.on('text', async (ctx) => {
     delete answers[chatId];
 
     const confirmMsg = l === 'th'
-      ? '✅ *ยืนยันคำสั่งซื้อแล้ว!*\nเราจะติดต่อคุณเร็วๆ นี้ 📲\n\nขอบคุณที่เลือก Parvati Weed Thailand! 🌿'
+      ? '✅ *ยืนยันคำสั่งซื้อแล้ว!*\nเราจะติดต่อคุณเร็วๆ นี้ 📲\n\nขอบคุณที่เลือก Parvati Service! 🌿'
       : l === 'ru'
-        ? '✅ *Заказ подтверждён!*\nМы свяжемся с вами в ближайшее время 📲\n\nСпасибо за выбор Parvati Weed Thailand! 🌿'
-        : '✅ *Order confirmed!*\nWe will contact you shortly 📲\n\nThank you for choosing Parvati Weed Thailand! 🌿';
+        ? '✅ *Заказ подтверждён!*\nМы свяжемся с вами в ближайшее время 📲\n\nСпасибо за выбор Parvati Service! 🌿'
+        : '✅ *Order confirmed!*\nWe will contact you shortly 📲\n\nThank you for choosing Parvati Service! 🌿';
 
     await ctx.reply(confirmMsg, {
       parse_mode: 'Markdown',
@@ -958,7 +958,7 @@ bot.on('text', async (ctx) => {
   // ─── FALLBACK ──────────────────────────────────────────────────────────
   if (ctx.message.text === '🔙 Назад') {
     delete answers[chatId];
-    await ctx.reply('🌿 *Parvati Weed Thailand*', {
+    await ctx.reply('🌿 *Parvati Service*', {
       parse_mode: 'Markdown', reply_markup: mainMenuKeyboard(chatId).reply_markup
     });
     return;
@@ -1214,7 +1214,7 @@ bot.action('support', async (ctx) => {
     text = '📞 *ซัพพอร์ต Parvati*\n\n' +
       'สำหรับคำถามเกี่ยวกับคำสั่งซื้อ จัดส่ง และความร่วมมือ:\n\n' +
       '👤 *ผู้จัดการ:* @dr_Andromeda\n' +
-      '📱 *Telegram:* @Parvati_WeedThiBot\n\n' +
+      '📱 *Telegram:* @Parvati420_bot\n\n' +
       '💬 หรือพิมพ์ข้อความตรงนี้ — เราจะตอบกลับเร็วๆ นี้!\n\n' +
       '🕐 *เวลาทำการ:*\n' +
       'ทุกวัน 10:00-22:00 น. (ICT, GMT+7)\n\n' +
@@ -1224,7 +1224,7 @@ bot.action('support', async (ctx) => {
     text = '📞 *Parvati Support*\n\n' +
       'For orders, delivery and partnerships:\n\n' +
       '👤 *Manager:* @dr_Andromeda\n' +
-      '📱 *Telegram:* @Parvati_WeedThiBot\n\n' +
+      '📱 *Telegram:* @Parvati420_bot\n\n' +
       '💬 Or just write here — we\'ll respond shortly!\n\n' +
       '🕐 *Working hours:*\n' +
       'Daily 10:00-22:00 (ICT, GMT+7)\n\n' +
@@ -1234,7 +1234,7 @@ bot.action('support', async (ctx) => {
     text = '📞 *Поддержка Parvati*\n\n' +
       'По вопросам заказов, доставки и сотрудничества:\n\n' +
       '👤 *Менеджер:* @dr_Andromeda\n' +
-      '📱 *Telegram:* @Parvati_WeedThiBot\n\n' +
+      '📱 *Telegram:* @Parvati420_bot\n\n' +
       '💬 Или просто напишите сюда — ответим в ближайшее время!\n\n' +
       '🕐 *Режим работы:*\n' +
       'Ежедневно 10:00-22:00 (ICT, GMT+7)\n\n' +
@@ -1255,9 +1255,9 @@ bot.action('about', async (ctx) => {
   let text;
 
   if (l === 'th') {
-    text = 'ℹ️ *เกี่ยวกับ Parvati Weed Thailand*\n\n' +
+    text = 'ℹ️ *เกี่ยวกับ Parvati Service*\n\n' +
       '🏝️ *เราเป็นใคร*\n' +
-      'Parvati — บริการจัดส่งกัญชาและกระท่อมพรีเมียมทั่วประเทศไทย\n' +
+      'Parvati — บริการจัดส่งผลิตภัณฑ์พรีเมียมทั่วประเทศไทย\n' +
       'ดำเนินงานตั้งแต่ปี 2024 ลูกค้าที่พึงพอใจนับพันราย\n\n' +
       '🏆 *มาตรฐานของเรา:*\n' +
       '• 💎 เฉพาะเกรดพรีเมียม: 4A, 5A, 5A+\n' +
@@ -1267,16 +1267,16 @@ bot.action('about', async (ctx) => {
       '• 🔒 ความลับเต็มรูปแบบ\n' +
       '• 📞 ซัพพอร์ตทุกวันในเวลาทำการ\n\n' +
       '🎯 *พันธกิจของเรา:*\n' +
-      'ทำให้กัญชาคุณภาพสูงเข้าถึงทุกคนในประเทศไทย — เร็ว ปลอดภัย และไม่เปิดเผย\n\n' +
+      'ทำให้ผลิตภัณฑ์คุณภาพสูงเข้าถึงทุกคนในประเทศไทย — เร็ว ปลอดภัย และไม่เปิดเผย\n\n' +
       '🤝 *พันธมิตร:*\n' +
       'เชื่อมโยงกับ Cafe 13 — สถานที่ iconic บนเกาะพะงัน 🍃☕\n' +
       'ร่วมงานกับผู้นำเข้าชั้นนำจาก USA และ Cali\n\n' +
       '📍 *เขตฐาน:* เกาะพะงัน สุราษฎร์ธานี\n' +
       '🌍 *จัดส่ง:* ทั่วประเทศ';
   } else if (l === 'en') {
-    text = 'ℹ️ *About Parvati Weed Thailand*\n\n' +
+    text = 'ℹ️ *About Parvati Service*\n\n' +
       '🏝️ *Who We Are*\n' +
-      'Parvati — premium cannabis and kratom delivery service throughout Thailand.\n' +
+      'Parvati — premium herbal and kratom delivery service throughout Thailand.\n' +
       'Operating since 2024, thousands of satisfied customers.\n\n' +
       '🏆 *Our Standards:*\n' +
       '• 💎 Top grades only: 4A, 5A, 5A+\n' +
@@ -1286,16 +1286,16 @@ bot.action('about', async (ctx) => {
       '• 🔒 Full confidentiality\n' +
       '• 📞 24/7 support during working hours\n\n' +
       '🎯 *Our Mission:*\n' +
-      'Making quality cannabis accessible to everyone in Thailand — fast, safe, and discreet.\n\n' +
+      'Making quality herbal accessible to everyone in Thailand — fast, safe, and discreet.\n\n' +
       '🤝 *Partners:*\n' +
       'Affiliated with Cafe 13 — iconic spot on Koh Phangan 🍃☕\n' +
       'Working with leading USA and Cali importers.\n\n' +
       '📍 *Base region:* Koh Phangan, Surat Thani\n' +
       '🌍 *Delivery:* Nationwide';
   } else {
-    text = 'ℹ️ *О Parvati Weed Thailand*\n\n' +
+    text = 'ℹ️ *О Parvati Service*\n\n' +
       '🏝️ *Кто мы*\n' +
-      'Parvati — премиум сервис доставки каннабиса и кратома по всему Таиланду.\n' +
+      'Parvati — премиум сервис доставки премиум продуктов по всему Таиланду.\n' +
       'Работаем с 2024 года, тысячи довольных клиентов.\n\n' +
       '🏆 *Наши стандарты:*\n' +
       '• 💎 Только топ грейды: 4A, 5A, 5A+\n' +
@@ -1305,7 +1305,7 @@ bot.action('about', async (ctx) => {
       '• 🔒 Полная конфиденциальность\n' +
       '• 📞 Поддержка 24/7 в рабочее время\n\n' +
       '🎯 *Наша миссия:*\n' +
-      'Сделать качественный каннабис доступным для каждого в Таиланде — быстро, безопасно и дискретно.\n\n' +
+      'Сделать качественный продукт доступным для каждого в Таиланде — быстро, безопасно и дискретно.\n\n' +
       '🤝 *Партнёры:*\n' +
       'Связаны с Cafe 13 — культовым местом на Koh Phangan 🍃☕\n' +
       'Сотрудничаем с ведущими импортёрами USA и Cali strains.\n\n' +
