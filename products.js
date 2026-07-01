@@ -76,7 +76,7 @@ const products = [
     effects_en: ['🫠 Body High', '😌 Relaxed'],
     effects_ru: ['🫠 Телесный', '😌 Расслабление'],
     prices: { '10шт': 350 },
-    image: null,
+    image: path.join(IMG_DIR, 'gummy.jpg'),
     desc_en: 'Delicious fruity gummy bears. 10 pieces × 10mg THC each. Perfect for microdosing or a gentle introduction to edibles. Vegan friendly.',
     desc_ru: 'Вкусные фруктовые мармеладки. 10 шт × 10мг ТГК. Идеально для микродозинга или первого знакомства с эдиблс. Веганские.'
   },
@@ -87,7 +87,7 @@ const products = [
     effects_en: ['🫠 Heavy Body', '😴 Sleepy'],
     effects_ru: ['🫠 Тяжёлый', '😴 Сон'],
     prices: { '1шт': 400 },
-    image: null,
+    image: path.join(IMG_DIR, 'brownie.jpg'),
     desc_en: 'Premium Belgian chocolate brownie. Rich, fudgy, and potent. 200mg THC for a long-lasting, deeply relaxing experience. For experienced consumers.',
     desc_ru: 'Брауни из бельгийского шоколада. Богатый, сочный, мощный. 200мг ТГК для долгого глубокого расслабления. Для опытных.'
   },
@@ -98,7 +98,7 @@ const products = [
     effects_en: ['🫠 Heavy Body', '💫 Euphoric'],
     effects_ru: ['🫠 Тяжёлый', '💫 Эйфория'],
     prices: { '25шт': 600 },
-    image: null,
+    image: path.join(IMG_DIR, 'gummy.jpg'),
     desc_en: 'Strong fruit gummy bears. 25 pieces × 10mg THC for a powerful, long-lasting experience. Best shared or for experienced users only.',
     desc_ru: 'Сильные фруктовые мармеладки. 25 шт × 10мг ТГК. Мощный эффект. Лучше делить или для опытных.'
   },
