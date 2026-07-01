@@ -196,11 +196,12 @@ function cartKeyboard(chatId) {
   const items = getCart(chatId);
   const buts = [];
 
-  // Add remove buttons for each item
-  items.forEach((i, idx) => {
+  // Add remove buttons for each item (with size)
+  items.forEach((i) => {
+    const name = l === 'ru' ? i.name_ru : i.name_en;
     buts.push([
-      Markup.button.callback(`➖ ${l === 'ru' ? i.name_ru : i.name_en}`, `cart_dec_${i.product_id}`),
-      Markup.button.callback(`🗑️`, `cart_rm_${i.product_id}`)
+      Markup.button.callback(`➖ ${name} (${i.size})`, `dec_${i.product_id}|${i.size}`),
+      Markup.button.callback(`🗑️`, `rm_${i.product_id}|${i.size}`)
     ]);
   });
 
@@ -441,24 +442,26 @@ async function showCart(chatId, ctx, editMode = false) {
 }
 
 // ─── CART CONTROLS ──────────────────────────────────────────────────────
-bot.action(/^cart_dec_(.+)$/, async (ctx) => {
+bot.action(/^dec_(.+)\|(.+)$/, async (ctx) => {
   const chatId = ctx.chat.id;
   const productId = ctx.match[1];
-  const item = db.prepare('SELECT * FROM carts WHERE chat_id = ? AND product_id = ?').get(chatId, productId);
+  const size = ctx.match[2];
+  const item = db.prepare('SELECT * FROM carts WHERE chat_id = ? AND product_id = ? AND size = ?').get(chatId, productId, size);
   if (item) {
     if (item.qty <= 1) {
-      db.prepare('DELETE FROM carts WHERE chat_id = ? AND product_id = ?').run(chatId, productId);
+      db.prepare('DELETE FROM carts WHERE chat_id = ? AND product_id = ? AND size = ?').run(chatId, productId, size);
     } else {
-      db.prepare('UPDATE carts SET qty = qty - 1 WHERE chat_id = ? AND product_id = ?').run(chatId, productId);
+      db.prepare('UPDATE carts SET qty = qty - 1 WHERE chat_id = ? AND product_id = ? AND size = ?').run(chatId, productId, size);
     }
   }
   await showCart(chatId, ctx, true);
 });
 
-bot.action(/^cart_rm_(.+)$/, async (ctx) => {
+bot.action(/^rm_(.+)\|(.+)$/, async (ctx) => {
   const chatId = ctx.chat.id;
   const productId = ctx.match[1];
-  db.prepare('DELETE FROM carts WHERE chat_id = ? AND product_id = ?').run(chatId, productId);
+  const size = ctx.match[2];
+  db.prepare('DELETE FROM carts WHERE chat_id = ? AND product_id = ? AND size = ?').run(chatId, productId, size);
   await showCart(chatId, ctx, true);
 });
 
@@ -522,14 +525,15 @@ bot.action('pay_cash', async (ctx) => {
       : '💵 *Cash to Courier*\n\nPlease enter your contact (phone or Telegram):',
     { parse_mode: 'Markdown' }
   );
-  answers[chatId] = { awaiting: 'contact', payment: 'cash' };
+  answers[chatId] = { ...answers[chatId], awaiting: 'contact', payment: 'cash' };
 });
 
 bot.action('pay_crypto', async (ctx) => {
   const chatId = ctx.chat.id;
   const cartData = formatCartText(chatId);
-  const total = cartData.total + DELIVERY_FEE;
-  const wallet = '0x1234...ABCD'; // Replace with your wallet
+  const fee = (answers[chatId] && answers[chatId].delivery_fee) || DELIVERY_FEE;
+  const total = cartData.total + fee;
+  const wallet = '0x1234...ABCD';
 
   await ctx.editMessageText(
     getLang(chatId) === 'ru'
@@ -537,14 +541,15 @@ bot.action('pay_crypto', async (ctx) => {
       : `₿ *Crypto Payment*\n\nAmount: ${total}฿\n\nSend USDT (TRC20) to:\n\`${wallet}\`\n\nAfter sending, enter your contact:`,
     { parse_mode: 'Markdown' }
   );
-  answers[chatId] = { awaiting: 'contact', payment: 'crypto' };
+  answers[chatId] = { ...answers[chatId], awaiting: 'contact', payment: 'crypto' };
 });
 
 bot.action('pay_qr', async (ctx) => {
   const chatId = ctx.chat.id;
   const cartData = formatCartText(chatId);
-  const total = cartData.total + DELIVERY_FEE;
-  const promptpayId = '0900100000'; // Replace with your PromptPay
+  const fee = (answers[chatId] && answers[chatId].delivery_fee) || DELIVERY_FEE;
+  const total = cartData.total + fee;
+  const promptpayId = '0900100000';
 
   await ctx.editMessageText(
     getLang(chatId) === 'ru'
@@ -552,7 +557,7 @@ bot.action('pay_qr', async (ctx) => {
       : `🇹🇭 *PromptPay QR*\n\nAmount: ${total}฿\n\n📱 PromptPay ID: \`${promptpayId}\`\n\nScan with your banking app.\nAfter payment, enter your contact:`,
     { parse_mode: 'Markdown' }
   );
-  answers[chatId] = { awaiting: 'contact', payment: 'promptpay' };
+  answers[chatId] = { ...answers[chatId], awaiting: 'contact', payment: 'promptpay' };
 });
 
 // ─── CONTACT / ADDRESS INPUT ──────────────────────────────────────────────
@@ -576,22 +581,26 @@ bot.on('text', async (ctx) => {
     const l = getLang(chatId);
     const address = ctx.message.text;
     const items = getCart(chatId);
-    const total = cartTotal(chatId) + DELIVERY_FEE;
+    const region = ans.region || 'bkk';
+    const regionData = DELIVERY_REGIONS.find(r => r.id === region) || DELIVERY_REGIONS[0];
+    const delivery_fee = ans.delivery_fee || DELIVERY_FEE;
+    const total = cartTotal(chatId) + delivery_fee;
 
-    // Save order
+    // Save order with region
     const itemsJson = JSON.stringify(items.map(i => ({
-      product_id: i.product_id, name_ru: i.name_ru, name_en: i.name_en,
+      product_id: i.product_id, name_ru: i.name_ru, name_en: i.name_en, size: i.size,
       qty: i.qty, price: i.price
     })));
-    db.prepare('INSERT INTO orders (chat_id, items, total, contact, address, payment) VALUES (?, ?, ?, ?, ?, ?)')
-      .run(chatId, itemsJson, total, ans.contact, address, ans.payment);
+    db.prepare('INSERT INTO orders (chat_id, items, total, delivery, region, contact, address, payment) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+      .run(chatId, itemsJson, total, delivery_fee, regionData.name_en, ans.contact, address, ans.payment);
 
     // Admin notification
     let orderText = `🛒 *${l === 'ru' ? 'Новый заказ!' : 'New Order!'}*\n\n`;
     items.forEach(i => {
       const name = l === 'ru' ? i.name_ru : i.name_en;
-      orderText += `${name} × ${i.qty} = ${i.price * i.qty}฿\n`;
+      orderText += `${name} (${i.size}) × ${i.qty} = ${i.price * i.qty}฿\n`;
     });
+    orderText += `\n🚚 ${regionData.name_en}: ${delivery_fee}฿`;
     orderText += `\n💰 ${l === 'ru' ? 'Итого' : 'Total'}: ${total}฿`;
     orderText += `\n💳 ${l === 'ru' ? 'Оплата' : 'Payment'}: ${ans.payment}`;
     orderText += `\n👤 ${l === 'ru' ? 'Контакт' : 'Contact'}: ${ans.contact}`;
@@ -613,23 +622,42 @@ bot.on('text', async (ctx) => {
     return;
   }
 
+  // ─── MY ORDERS ─────────────────────────────────────────────────────────
+  if (ctx.message.text === '/myorders') {
+    const myOrders = db.prepare('SELECT * FROM orders WHERE chat_id = ? ORDER BY created_at DESC LIMIT 5').all(chatId);
+    if (!myOrders.length) {
+      return ctx.reply(getLang(chatId) === 'ru'
+        ? '📋 У вас пока нет заказов.'
+        : '📋 You have no orders yet.');
+    }
+    let text = getLang(chatId) === 'ru' ? '📋 *Мои заказы:*\n\n' : '📋 *My Orders:*\n\n';
+    myOrders.forEach(o => {
+      text += `#${o.id} | ${o.created_at}\n💰 ${o.total}฿ | 🚚 ${o.region || '-'}\n💳 ${o.payment} | 📊 ${o.status}\n\n`;
+    });
+    return ctx.reply(text, { parse_mode: 'Markdown' });
+  }
+
   // ─── ADMIN COMMANDS ────────────────────────────────────────────────────
   if (chatId === ADMIN_ID && ctx.message.text === '/stats') {
     const users = db.prepare('SELECT COUNT(*) as c FROM users').get().c;
     const orders = db.prepare('SELECT COUNT(*) as c FROM orders').get().c;
+    const todayOrders = db.prepare("SELECT COUNT(*) as c FROM orders WHERE date(created_at) = date('now')").get().c;
+    const revenue = db.prepare("SELECT COALESCE(SUM(total),0) as s FROM orders WHERE date(created_at) = date('now')").get().s;
     const activeCarts = db.prepare('SELECT COUNT(DISTINCT chat_id) as c FROM carts').get().c;
     return ctx.reply(
-      `📊 *Parvati Stats*\n\n👤 Users: ${users}\n📦 Orders: ${orders}\n🛒 Active carts: ${activeCarts}`,
+      `📊 *Parvati Stats*\n\n👤 Users: ${users}\n📦 Всего заказов: ${orders}\n📅 Сегодня: ${todayOrders} (${revenue.toLocaleString()}฿)\n🛒 Активных корзин: ${activeCarts}`,
       { parse_mode: 'Markdown' }
     );
   }
 
   if (chatId === ADMIN_ID && ctx.message.text === '/orders') {
-    const orders = db.prepare('SELECT * FROM orders ORDER BY created_at DESC LIMIT 10').all();
+    const orders = db.prepare('SELECT * FROM orders ORDER BY created_at DESC LIMIT 15').all();
     if (!orders.length) return ctx.reply('No orders yet');
-    let text = '📋 *Last 10 orders:*\n\n';
+    let text = '📋 *Последние заказы:*\n\n';
     orders.forEach(o => {
-      text += `#${o.id} | ${o.created_at}\n💰 ${o.total}฿ | 📍 ${o.address}\n👤 ${o.contact} | 💳 ${o.payment} | 📊 ${o.status}\n\n`;
+      const items = JSON.parse(o.items || '[]');
+      const itemSummary = items.map(i => `${i.qty}×${i.name_en || i.name_ru}${i.size ? '('+i.size+')' : ''}`).join(', ') || '-';
+      text += `#${o.id} | ${o.created_at}\n${itemSummary}\n💰 ${o.total}฿ | 🚚 ${o.region || '-'}\n👤 ${o.contact} | 💳 ${o.payment} | 📊 ${o.status}\n\n`;
     });
     return ctx.reply(text, { parse_mode: 'Markdown' });
   }
