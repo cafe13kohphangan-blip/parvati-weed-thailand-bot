@@ -381,20 +381,23 @@ products.forEach(p => {
   });
 });
 
-// ─── ADD TO CART ─────────────────────────────────────────────────────────
+// ─── SIZE SELECTION → ADD TO CART ────────────────────────────────────────
 products.forEach(p => {
-  bot.action(`add_${p.id}`, async (ctx) => {
-    const chatId = ctx.chat.id;
-    const existing = db.prepare('SELECT * FROM carts WHERE chat_id = ? AND product_id = ?').get(chatId, p.id);
-    if (existing) {
-      db.prepare('UPDATE carts SET qty = qty + 1 WHERE chat_id = ? AND product_id = ?').run(chatId, p.id);
-    } else {
-      db.prepare('INSERT INTO carts (chat_id, product_id, qty) VALUES (?, ?, 1)').run(chatId, p.id);
-    }
-    const l = getLang(chatId);
-    const pName = l === 'ru' ? p.name_ru : p.name_en;
-    await ctx.answerCbQuery(`✅ ${pName} +1`);
-    await showCart(chatId, ctx, true);
+  const sizes = Object.keys(p.prices || {});
+  sizes.forEach(s => {
+    bot.action(`size_${p.id}_${s}`, async (ctx) => {
+      const chatId = ctx.chat.id;
+      const existing = db.prepare('SELECT * FROM carts WHERE chat_id = ? AND product_id = ? AND size = ?').get(chatId, p.id, s);
+      if (existing) {
+        db.prepare('UPDATE carts SET qty = qty + 1 WHERE chat_id = ? AND product_id = ? AND size = ?').run(chatId, p.id, s);
+      } else {
+        db.prepare('INSERT INTO carts (chat_id, product_id, size, qty) VALUES (?, ?, ?, 1)').run(chatId, p.id, s);
+      }
+      const l = getLang(chatId);
+      const pName = l === 'ru' ? p.name_ru : p.name_en;
+      await ctx.answerCbQuery(`✅ ${pName} (${s}) +1`);
+      await showCart(chatId, ctx, true);
+    });
   });
 });
 
@@ -465,6 +468,15 @@ bot.action('clear_cart', async (ctx) => {
   await showCart(chatId, ctx, true);
 });
 
+function regionKeyboard(chatId) {
+  const l = getLang(chatId);
+  const rows = DELIVERY_REGIONS.map(r => [
+    Markup.button.callback(`${r.name_en} — ${r.price}฿ (${l === 'ru' ? r.time_ru : r.time_en})`, `region_${r.id}`)
+  ]);
+  rows.push([Markup.button.callback(l === 'ru' ? '🔙 Назад' : '🔙 Back', 'cart')]);
+  return Markup.inlineKeyboard(rows);
+}
+
 // ─── CHECKOUT ─────────────────────────────────────────────────────────────
 bot.action('checkout', async (ctx) => {
   const chatId = ctx.chat.id;
@@ -473,11 +485,31 @@ bot.action('checkout', async (ctx) => {
   if (!cartData) return showCart(chatId, ctx, true);
 
   let text = cartData.text;
-  text += `\n\n💳 *${l === 'ru' ? 'Выберите способ оплаты:' : 'Choose payment:'}*`;
+  text += `\n\n📍 *${l === 'ru' ? 'Выберите регион доставки:' : 'Choose delivery region:'}*`;
 
   await ctx.editMessageText(text, {
     parse_mode: 'Markdown',
-    reply_markup: paymentKeyboard(chatId).reply_markup
+    reply_markup: regionKeyboard(chatId).reply_markup
+  });
+});
+
+// ─── REGION SELECTION ─────────────────────────────────────────────────────
+DELIVERY_REGIONS.forEach(r => {
+  bot.action(`region_${r.id}`, async (ctx) => {
+    const chatId = ctx.chat.id;
+    const l = getLang(chatId);
+    answers[chatId] = { ...answers[chatId], region: r.id, delivery_fee: r.price };
+
+    const cartData = formatCartText(chatId);
+    let text = cartData.text;
+    text += `\n🚚 ${r.name_en}: +${r.price}฿`;
+    text += `\n💰 *${l === 'ru' ? 'Итого' : 'Total'}: ${cartData.total + r.price}฿*`;
+    text += `\n\n💳 *${l === 'ru' ? 'Выберите способ оплаты:' : 'Choose payment:'}*`;
+
+    await ctx.editMessageText(text, {
+      parse_mode: 'Markdown',
+      reply_markup: paymentKeyboard(chatId).reply_markup
+    });
   });
 });
 
