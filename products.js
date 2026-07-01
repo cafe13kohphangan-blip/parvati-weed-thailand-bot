@@ -1,189 +1,139 @@
-// Parvati Weed Thailand - Premium Product Catalog v2.2
-const path = require('path');
-const IMG_DIR = path.join(__dirname, 'images');
+// Parvati Thailand - Premium Product Catalog
+// Enhanced with effects, flavors, THC%, and detailed descriptions
+// Flat product list includes both standalone products and size-variant products.
+// Size variants are grouped under a common strain name for size selection UI.
 
 const categories = [
-  { id: 'flower',    name_en: '🌿 Flower',      name_ru: '🌿 Шишки',      name_th: '🌿 ดอก',     emoji: '🌿' },
-  { id: 'edibles',   name_en: '🍪 Edibles',     name_ru: '🍪 Эдиблс',     name_th: '🍪 อาหาร',   emoji: '🍪' },
-  { id: 'prerolls',  name_en: '🚬 Pre-rolls',   name_ru: '🚬 Готовые косяки', name_th: '🚬 จอยต์', emoji: '🚬' },
-  { id: 'kratom',    name_en: '🌱 Kratom',      name_ru: '🌱 Кратом',     name_th: '🌱 กระท่อม', emoji: '🌱' },
-  { id: 'accessory', name_en: '🔧 Accessories', name_ru: '🔧 Аксессуары', name_th: '🔧 อุปกรณ์',  emoji: '🔧' },
+  { id: 'kratom',    name_en: '🍃 Kratom Collection', name_ru: '🍃 Коллекция Кратом' },
+  { id: 'flower',    name_en: '🌿 Flower Strains',    name_ru: '🌿 Сорта Шишек' },
+  { id: 'edibles',   name_en: '🍪 Edibles',           name_ru: '🍪 Эдиблс' },
+  { id: 'prerolls',  name_en: '🚬 Pre-rolls',         name_ru: '🚬 Готовые косяки' },
+  { id: 'accessory', name_en: '🔧 Accessories',       name_ru: '🔧 Аксессуары' },
 ];
 
+// ===== FLAT PRODUCT LIST =====
+// Every product here exists both as a standalone entry in the flat array,
+// and (for flower strains with multiple sizes) as part of a size group.
 const products = [
-  // ============ FLOWER STRAINS ============
-  {
-    id: 'f_ogkush', cat: 'flower',
-    name_en: 'OG Kush', name_ru: 'OG Kush',
-    grade: '4A', type: 'Hybrid', thc: '22-26%',
-    effects_en: ['😌 Relaxed', '😊 Happy', '😴 Sleepy'],
-    effects_ru: ['😌 Расслабление', '😊 Счастье', '😴 Сон'],
-    prices: {'1г': 300, '3г': 750, '5г': 1200, '10г': 2200, '50г': 9500},
-    image: path.join(IMG_DIR, 'og-kush.jpg'),
-    desc_en: 'Legendary West Coast strain. A powerful hybrid that delivers a potent body high balanced with cerebral euphoria. Known for its distinct earthy pine and lemon aroma with notes of fuel. Perfect for any time of day — social or solo.',
-    desc_ru: '🌿 Легендарный сорт с Западного побережья. Мощный гибрид с сильным телесным эффектом и эйфорией. Отличается землисто-сосновым ароматом с нотками лимона и дизеля. Подходит для любого времени суток. Один из самых продаваемых сортов в нашем каталоге!'
-  },
-  {
-    id: 'f_amnesia', cat: 'flower',
-    name_en: 'Amnesia Haze', name_ru: 'Amnesia Haze',
-    grade: '4A', type: 'Sativa 70%', thc: '20-25%',
-    effects_en: ['⚡ Energetic', '🎨 Creative', '☀️ Uplifted'],
-    effects_ru: ['⚡ Энергия', '🎨 Креатив', '☀️ Подъём'],
-    prices: {'1г': 250, '3г': 600, '5г': 1000, '10г': 1800, '50г': 8000},
-    image: path.join(IMG_DIR, 'amnesia-haze.jpg'),
-    desc_en: '🏆 Award-winning sativa-dominant hybrid. Delivers an uplifting, energetic high perfect for daytime creativity and social activities. Citrus and earthy flavors with a hint of sweetness. A true classic that never disappoints — great for morning or afternoon sessions.',
-    desc_ru: '🏆 Сатива-доминантный гибрид, многократный победитель Cannabis Cup. Бодрящий эффект, идеален для дня и творчества. Цитрусово-землистый вкус с ноткой сладости. Настоящая классика, которая никогда не разочаровывает. Отлично подходит для утренних и дневных сессий.'
-  },
-  {
-    id: 'f_northern', cat: 'flower',
-    name_en: 'Northern Lights', name_ru: 'Northern Lights',
-    grade: '4A', type: 'Indica 80%', thc: '18-22%',
-    effects_en: ['😴 Sleepy', '😌 Relaxed', '✨ Tingly'],
-    effects_ru: ['😴 Сон', '😌 Расслабление', '✨ Покалывание'],
-    prices: {'1г': 200, '3г': 500, '5г': 800, '10г': 1500, '50г': 6500},
-    image: path.join(IMG_DIR, 'northern-lights.jpg'),
-    desc_en: '🌟 An all-time classic indica. Known for its heavy resin production and profoundly relaxing body effects. Sweet and spicy aroma with notes of pine and earth. Perfect for evenings and deep relaxation. Best value in our catalog!',
-    desc_ru: '🌟 Классическая индика, известная во всём мире. Тяжёлое смолистое покрытие и глубокое расслабление тела. Сладко-пряный аромат с сосновыми нотками. Идеальна для вечера и глубокого расслабления. Лучшая цена в нашем каталоге!'
-  },
-  {
-    id: 'f_gelato', cat: 'flower',
-    name_en: 'Gelato #33', name_ru: 'Gelato #33',
-    grade: '5A', type: 'Hybrid', thc: '24-28%',
-    effects_en: ['🎨 Creative', '💫 Euphoric', '😊 Happy'],
-    effects_ru: ['🎨 Креатив', '💫 Эйфория', '😊 Счастье'],
-    prices: {'1г': 350, '3г': 850, '5г': 1400, '10г': 2600, '50г': 11500},
-    image: path.join(IMG_DIR, 'gelato33.jpg'),
-    desc_en: '🍨 Premium dessert strain — the legendary Gelato #33. Sweet vanilla and lavender aroma with a smooth, balanced high that starts euphoric and settles into deep relaxation. Top shelf quality, 5A grade. One of the most sought-after strains worldwide.',
-    desc_ru: '🍨 Премиум десертный сорт — легендарный Gelato #33. Сладкий аромат ванили и лаванды. Сбалансированный эффект — от эйфории к глубокому расслаблению. Топ качество, грейд 5A. Один из самых востребованных сортов в мире.'
-  },
-  {
-    id: 'f_tropcherry', cat: 'flower',
-    name_en: 'Trop Cherry', name_ru: 'Trop Cherry',
-    grade: '5A+', type: 'Sativa 60%', thc: '25-28%',
-    effects_en: ['🎯 Focused', '💫 Euphoric', '⚡ Energetic'],
-    effects_ru: ['🎯 Фокус', '💫 Эйфория', '⚡ Энергия'],
-    prices: {'1г': 450, '3г': 1100, '5г': 1800, '10г': 3400, '50г': 15000},
-    image: path.join(IMG_DIR, 'trop-cherry.jpg'),
-    desc_en: '💎 Exotic top-shelf exclusive — our highest grade! Bursting with cherry terpenes and tropical fruit notes. Potent sativa-leaning effects — focused, energetic, and creatively inspiring. The crown jewel of our collection. Limited availability!',
-    desc_ru: '💎 Эксклюзивный топ-шельф — наш высший грейд! Взрыв вишнёвых терпенов и тропических фруктов. Мощная сатива — фокус, энергия, вдохновение. Жемчужина нашей коллекции. Ограниченная доступность!'
-  },
+  // ---- KRATOM ----
+  { id: 'k1', cat: 'kratom', name_en: 'Kratom Powder 10g', name_ru: 'Порошок Кратом 10г', price: 150, desc_en: 'Red/Green/White vein · Pure Thai powder · Mild energy boost · Best for beginners', desc_ru: 'Красный/Зелёный/Белый сорт · Чистый тайский порошок · Мягкий прилив энергии · Лучший для новичков' },
+  { id: 'k2', cat: 'kratom', name_en: 'Kratom Powder 25g', name_ru: 'Порошок Кратом 25г', price: 300, desc_en: 'Red/Green/White vein · Medium pack · Balanced effects · Great value', desc_ru: 'Красный/Зелёный/Белый сорт · Средняя фасовка · Сбалансированный эффект · Отличная цена' },
+  { id: 'k3', cat: 'kratom', name_en: 'Kratom Powder 50g', name_ru: 'Порошок Кратом 50г', price: 500, desc_en: 'Red/Green/White vein · Best value bulk · Long-lasting supply', desc_ru: 'Красный/Зелёный/Белый сорт · Лучшее соотношение цена/объём' },
+  { id: 'k4', cat: 'kratom', name_en: 'Kratom Powder 100g', name_ru: 'Порошок Кратом 100г', price: 900, desc_en: 'Red/Green/White vein · Large bulk pack · Premium quality', desc_ru: 'Красный/Зелёный/Белый сорт · Большая фасовка · Премиум качество' },
+  { id: 'k5', cat: 'kratom', name_en: 'Kratom Capsules 10pcs', name_ru: 'Капсулы Кратом 10шт', price: 200, desc_en: '500mg each · Easy to swallow · No bitter taste · Convenient dosing', desc_ru: 'По 500мг · Легко глотать · Нет горького вкуса · Удобная дозировка' },
+  { id: 'k6', cat: 'kratom', name_en: 'Kratom Capsules 30pcs', name_ru: 'Капсулы Кратом 30шт', price: 500, desc_en: '500mg each · 1 month supply · Perfect for regular users', desc_ru: 'По 500мг · На 1 месяц · Идеально для регулярного приёма' },
+  { id: 'k7', cat: 'kratom', name_en: 'Kratom Tea 5 bags', name_ru: 'Чай Кратом 5 пак.', price: 180, desc_en: 'Traditional brew · 3g per bag · Smooth, authentic taste', desc_ru: 'Традиционный напиток · 3г в пакетике · Мягкий, аутентичный вкус' },
+  { id: 'k8', cat: 'kratom', name_en: 'Kratom Tea 20 bags', name_ru: 'Чай Кратом 20 пак.', price: 600, desc_en: 'Traditional brew · Box of 20 bags · Best value for tea lovers', desc_ru: 'Традиционный напиток · Коробка 20 пакетиков' },
+  { id: 'k9', cat: 'kratom', name_en: 'Kratom Extract 5ml', name_ru: 'Экстракт Кратом 5мл', price: 400, desc_en: 'Concentrated liquid · Fast acting · 15x potency', desc_ru: 'Концентрированная жидкость · Быстрое действие · 15x сила' },
+  { id: 'k10', cat: 'kratom', name_en: 'Kratom Extract 15ml', name_ru: 'Экстракт Кратом 15мл', price: 1000, desc_en: 'Premium concentrated extract · 15x potency · Best value', desc_ru: 'Премиум концентрированный экстракт · 15x сила' },
 
-  // ============ EDIBLES ============
-  {
-    id: 'e_gummy100', cat: 'edibles',
-    name_en: 'Gummy Bears 🐻 100mg', name_ru: 'Мармеладки 🐻 100мг',
-    grade: 'A', type: 'Edible', thc: '100mg THC',
-    effects_en: ['🫠 Body High', '😌 Relaxed'],
-    effects_ru: ['🫠 Телесный', '😌 Расслабление'],
-    prices: { '5шт': 200, '10шт': 350, '25шт': 800, '50шт': 1500 },
-    image: path.join(IMG_DIR, 'gummy.jpg'),
-    desc_en: 'Delicious fruity gummy bears. 10 pieces × 10mg THC each. Perfect for microdosing or a gentle introduction to edibles. Vegan friendly.',
-    desc_ru: 'Вкусные фруктовые мармеладки. 10 шт × 10мг ТГК. Идеально для микродозинга или первого знакомства с эдиблс. Веганские.'
-  },
-  {
-    id: 'e_brownie', cat: 'edibles',
-    name_en: 'Choco Brownie 🍫 200mg', name_ru: 'Брауни 🍫 200мг',
-    grade: 'A', type: 'Edible', thc: '200mg THC',
-    effects_en: ['🫠 Heavy Body', '😴 Sleepy'],
-    effects_ru: ['🫠 Тяжёлый', '😴 Сон'],
-    prices: { '1шт': 400, '3шт': 1100, '5шт': 1700, '10шт': 3200 },
-    image: path.join(IMG_DIR, 'brownie.jpg'),
-    desc_en: 'Premium Belgian chocolate brownie. Rich, fudgy, and potent. 200mg THC for a long-lasting, deeply relaxing experience. For experienced consumers.',
-    desc_ru: 'Брауни из бельгийского шоколада. Богатый, сочный, мощный. 200мг ТГК для долгого глубокого расслабления. Для опытных.'
-  },
-  {
-    id: 'e_gummy250', cat: 'edibles',
-    name_en: 'Gummy Bears 🐻 250mg', name_ru: 'Мармеладки 🐻 250мг',
-    grade: 'A', type: 'Edible', thc: '250mg THC',
-    effects_en: ['🫠 Heavy Body', '💫 Euphoric'],
-    effects_ru: ['🫠 Тяжёлый', '💫 Эйфория'],
-    prices: { '5шт': 150, '10шт': 280, '25шт': 600, '50шт': 1100 },
-    image: path.join(IMG_DIR, 'gummy.jpg'),
-    desc_en: 'Strong fruit gummy bears. 25 pieces × 10mg THC for a powerful, long-lasting experience. Best shared or for experienced users only.',
-    desc_ru: 'Сильные фруктовые мармеладки. 25 шт × 10мг ТГК. Мощный эффект. Лучше делить или для опытных.'
-  },
+  // ---- FLOWER (size variants first, then standalone) ----
+  // OG Kush (3 sizes)
+  { id: 'f1', cat: 'flower', name_en: 'OG Kush 1g', name_ru: 'OG Kush 1г', price: 300, desc_en: 'Hybrid · 22-26% THC · Earthy, pine, citrus · Euphoric, relaxed', desc_ru: 'Гибрид · 22-26% ТГК · Землистый, сосна, цитрус · Эйфория, расслабление' },
+  { id: 'f2', cat: 'flower', name_en: 'OG Kush 3g', name_ru: 'OG Kush 3г', price: 800, desc_en: 'Hybrid · 22-26% THC · Best value 3g pack', desc_ru: 'Гибрид · 22-26% ТГК · Выгодная упаковка 3г' },
+  { id: 'f3', cat: 'flower', name_en: 'OG Kush 5g', name_ru: 'OG Kush 5г', price: 1200, desc_en: 'Hybrid · 22-26% THC · Best deal 5g pack', desc_ru: 'Гибрид · 22-26% ТГК · Лучшая цена 5г' },
+  // Amnesia Haze (2 sizes)
+  { id: 'f4', cat: 'flower', name_en: 'Amnesia Haze 1g', name_ru: 'Amnesia Haze 1г', price: 250, desc_en: 'Sativa · 20-24% THC · Citrus, earthy · Energetic, creative', desc_ru: 'Сатива · 20-24% ТГК · Цитрус, земля · Бодрит, креатив' },
+  { id: 'f5', cat: 'flower', name_en: 'Amnesia Haze 3g', name_ru: 'Amnesia Haze 3г', price: 700, desc_en: 'Sativa · 20-24% THC · 3g pack best value', desc_ru: 'Сатива · 20-24% ТГК · Упаковка 3г' },
+  // Northern Lights (2 sizes)
+  { id: 'f6', cat: 'flower', name_en: 'Northern Lights 1g', name_ru: 'Northern Lights 1г', price: 200, desc_en: 'Indica · 18-22% THC · Sweet, spicy · Deep relaxation, sleep', desc_ru: 'Индика · 18-22% ТГК · Сладкий, пряный · Глубокий релакс, сон' },
+  { id: 'f7', cat: 'flower', name_en: 'Northern Lights 3g', name_ru: 'Northern Lights 3г', price: 550, desc_en: 'Indica · 18-22% THC · 3g pack', desc_ru: 'Индика · 18-22% ТГК · Упаковка 3г' },
+  // Blue Dream (standalone, no group)
+  { id: 'f8', cat: 'flower', name_en: 'Blue Dream 1g', name_ru: 'Blue Dream 1г', price: 280, desc_en: 'Hybrid · 20-24% THC · Sweet berry, vanilla · Creative, uplifting · Perfect all-day strain', desc_ru: 'Гибрид · 20-24% ТГК · Сладкая ягода, ваниль · Креатив, подъём · Идеален на весь день' },
+  // Gelato (2 sizes)
+  { id: 'f9', cat: 'flower', name_en: 'Gelato 1g', name_ru: 'Gelato 1г', price: 350, desc_en: 'Hybrid · 20-25% THC · Sweet, creamy, berry · Relaxed, happy', desc_ru: 'Гибрид · 20-25% ТГК · Сладкий, кремовый, ягода · Расслабление, счастье' },
+  { id: 'f10', cat: 'flower', name_en: 'Gelato 3g', name_ru: 'Gelato 3г', price: 950, desc_en: 'Hybrid · 20-25% THC · Premium 3g pack', desc_ru: 'Гибрид · 20-25% ТГК · Премиум 3г' },
+  // Thai Stick (2 sizes)
+  { id: 'f11', cat: 'flower', name_en: 'Thai Stick 1g', name_ru: 'Thai Stick 1г', price: 80, desc_en: 'Sativa · 14-18% THC · Earthy, herbal · Light, budget-friendly', desc_ru: 'Сатива · 14-18% ТГК · Землистый, травяной · Лёгкий, бюджетный' },
+  { id: 'f12', cat: 'flower', name_en: 'Thai Stick 5g', name_ru: 'Thai Stick 5г', price: 350, desc_en: 'Sativa · 14-18% THC · 5g pack best deal', desc_ru: 'Сатива · 14-18% ТГК · Упаковка 5г' },
+  // Premium standalone strains
+  { id: 'f13', cat: 'flower', name_en: 'Imperium X Black Berry Pop Pop', name_ru: 'Imperium X Black Berry Pop Pop', price: 1350, desc_en: 'Sativa 60% · 25-28% THC · Berry, diesel · Uplifting, euphoric, energetic · Premium exotic strain', desc_ru: 'Сатива 60% · 25-28% ТГК · Ягода, дизель · Подъём, эйфория, энергия · Премиум экзотик' },
+  { id: 'f14', cat: 'flower', name_en: 'Black Berry Pop (2s)', name_ru: 'Black Berry Pop (2s)', price: 509, desc_en: 'Hybrid · 22-26% THC · Sweet berry, grape · Relaxed, happy, creative', desc_ru: 'Гибрид · 22-26% ТГК · Сладкая ягода, виноград · Релакс, счастье, креатив' },
+  { id: 'f15', cat: 'flower', name_en: 'OG Kush Face Off OG', name_ru: 'OG Kush Face Off OG', price: 800, desc_en: 'Hybrid 55% Sativa · 24-28% THC · Diesel, pine, lemon · Potent, long-lasting · Heavy hitter', desc_ru: 'Гибрид 55% Сатива · 24-28% ТГК · Дизель, сосна, лимон · Мощный, долгий эффект' },
 
-  // ============ PRE-ROLLS ============
-  {
-    id: 'p_standard', cat: 'prerolls',
-    name_en: 'Standard Joint 🌿 0.5g', name_gr: 'Стандарт 🌿 0.5г',
-    name_ru: 'Стандарт 🌿 0.5г',
-    grade: '3A', type: 'Joint', thc: '18-22%',
-    effects_en: ['😌 Relaxed', '😊 Happy'],
-    effects_ru: ['😌 Расслабление', '😊 Счастье'],
-    prices: { '1шт': 100, '3шт': 280, '5шт': 450, '10шт': 850 },
-    image: path.join(IMG_DIR, 'preroll-pack.jpg'),
-    desc_en: 'Ready-to-smoke mixed strain joint with glass tip. Smooth burn, consistent quality. Perfect for on-the-go.',
-    desc_ru: 'Готовый косяк из микс сортов со стеклянным наконечником. Ровное горение. Идеален для прогулки.'
-  },
-  {
-    id: 'p_premium', cat: 'prerolls',
-    name_en: 'Premium Joint 🌟 1g', name_ru: 'Премиум 🌟 1г',
-    grade: '4A', type: 'Joint', thc: '22-26%',
-    effects_en: ['💫 Euphoric', '🫠 Body High'],
-    effects_ru: ['💫 Эйфория', '🫠 Телесный'],
-    prices: {'1шт': 350, '3шт': 950, '5шт': 1500, '10шт': 2800},
-    image: path.join(IMG_DIR, 'preroll-premium.jpg'),
-    desc_en: 'King size premium joint. Top shelf flower, organic paper, glass tip. The ultimate ready-to-smoke experience.',
-    desc_ru: 'Кинг сайз премиум косяк. Топ сорт, органическая бумага, стеклянный наконечник. Лучший готовый джоинт.'
-  },
+  // ---- EDIBLES ----
+  { id: 'e1', cat: 'edibles', name_en: 'Gummy Bears 50mg', name_ru: 'Мармелад 50мг', price: 200, desc_en: '5 pieces × 10mg each · Fruity assorted flavors · Mild, social buzz', desc_ru: '5 штук по 10мг · Фруктовые вкусы · Мягкий, социальный эффект' },
+  { id: 'e2', cat: 'edibles', name_en: 'Gummy Bears 100mg', name_ru: 'Мармелад 100мг', price: 350, desc_en: '10 pieces × 10mg each · Fruity mix · Medium strength', desc_ru: '10 штук по 10мг · Фруктовая смесь · Средняя сила' },
+  { id: 'e3', cat: 'edibles', name_en: 'Gummy Bears 200mg', name_ru: 'Мармелад 200мг', price: 600, desc_en: '20 pieces × 10mg each · Fruity mix · Strong, long-lasting', desc_ru: '20 штук по 10мг · Фруктовая смесь · Сильный, долгий эффект' },
+  { id: 'e4', cat: 'edibles', name_en: 'Choco Brownie 100mg', name_ru: 'Брауни 100мг', price: 250, desc_en: 'Rich dark chocolate brownie · 100mg THC · Delicious & potent', desc_ru: 'Брауни из тёмного шоколада · 100мг ТГК · Вкусно и мощно' },
+  { id: 'e5', cat: 'edibles', name_en: 'Choco Brownie 200mg', name_ru: 'Брауни 200мг', price: 400, desc_en: 'Double strength dark chocolate · 200mg THC · For experienced users', desc_ru: 'Двойная сила · 200мг ТГК · Для опытных' },
+  { id: 'e6', cat: 'edibles', name_en: 'Cookies 150mg', name_ru: 'Печенье 150мг', price: 300, desc_en: '4 cookies × 37.5mg each · Classic chocolate chip · Perfect sharing pack', desc_ru: '4 печенья по 37.5мг · Классическое шоколадное · Отлично на компанию' },
 
-  // ============ KRATOM ============
-  {
-    id: 'k_powder', cat: 'kratom',
-    name_en: 'Premium Kratom 🌱 50g', name_ru: 'Премиум Кратом 🌱 50г',
-    grade: '4A', type: 'Kratom', thc: 'Mitragynine',
-    effects_en: ['⚡ Energy', '🎯 Focus', '😌 Relaxed'],
-    effects_ru: ['⚡ Энергия', '🎯 Фокус', '😌 Расслабление'],
-    prices: { '25г': 200, '50г': 350, '100г': 600, '250г': 1300, '500г': 2200, '1кг': 4000 },
-    image: path.join(IMG_DIR, 'kratom-powder.jpg'),
-    desc_en: 'Premium Thai kratom powder. Available in Red, White, and Green vein strains. Lab tested for purity and alkaloid content.',
-    desc_ru: 'Премиум тайский порошок кратом. Красный, Белый, Зелёный сорта. Лабораторное тестирование.'
-  },
-  {
-    id: 'k_caps', cat: 'kratom',
-    name_en: 'Kratom Capsules 💊 30ct', name_ru: 'Капсулы Кратом 💊 30шт',
-    grade: '4A', type: 'Kratom', thc: 'Mitragynine',
-    effects_en: ['⚡ Energy', '😊 Mood Boost'],
-    effects_ru: ['⚡ Энергия', '😊 Настроение'],
-    prices: { '30шт': 450, '60шт': 800, '100шт': 1200, '200шт': 2200 },
-    image: path.join(IMG_DIR, 'kratom-caps.jpg'),
-    desc_en: 'Convenient pre-measured kratom capsules. 500mg each. Easy to take anywhere — no measuring, no taste.',
-    desc_ru: 'Удобные капсулы кратома. По 500мг каждая. Легко принять где угодно — без вкуса и измерения.'
-  },
+  // ---- PRE-ROLLS ----
+  { id: 'p1', cat: 'prerolls', name_en: 'Joint 0.5g', name_ru: 'Косяк 0.5г', price: 100, desc_en: 'Premium flower · Single joint · Easy & convenient · Perfect for trying', desc_ru: 'Премиум цвет · Один косяк · Удобно · Попробовать сорт' },
+  { id: 'p2', cat: 'prerolls', name_en: 'Joint 1g', name_ru: 'Косяк 1г', price: 180, desc_en: 'Premium flower · King size joint · Long session', desc_ru: 'Премиум цвет · Кинг сайз · Долгая сессия' },
+  { id: 'p3', cat: 'prerolls', name_en: '3-Pack 0.5g', name_ru: '3-Pack 0.5г', price: 250, desc_en: '3 premium joints × 0.5g · Great value pack', desc_ru: '3 премиум косяка по 0.5г · Выгодный набор' },
+  { id: 'p4', cat: 'prerolls', name_en: '5-Pack 0.5g', name_ru: '5-Pack 0.5г', price: 400, desc_en: '5 premium joints × 0.5g · Party pack · Best deal', desc_ru: '5 премиум косяков по 0.5г · На компанию' },
+  { id: 'p5', cat: 'prerolls', name_en: 'Infused Joint', name_ru: 'Премиум косяк', price: 350, desc_en: 'Premium flower + kief + botanical oil · Triple threat · Very potent', desc_ru: 'Премиум цвет + киф + масло · Тройной удар · Очень мощный' },
 
-  // ============ ACCESSORIES ============
-  {
-    id: 'a_papers', cat: 'accessory',
-    name_en: 'Rolling Papers 📄 (50)', name_ru: 'Бумаги 📄 (50)',
-    grade: 'A', type: 'Accessory', thc: null,
-    effects_en: [], effects_ru: [],
-    prices: { '1пачка': 50, '3пачки': 130, '5пачек': 200, '10пачек': 350 },
-    image: path.join(IMG_DIR, 'papers.jpg'),
-    desc_en: 'King size organic hemp rolling papers. Slow, even burn. No added chemicals. 50 per pack.',
-    desc_ru: 'Кинг сайз бумаги из органической конопли. Медленное ровное горение. Без химии. 50 шт.'
-  },
-  {
-    id: 'a_grinder', cat: 'accessory',
-    name_en: 'Metal Grinder 🔧 4-pc', name_ru: 'Грайндер 🔧 4-ч',
-    grade: 'A', type: 'Accessory', thc: null,
-    effects_en: [], effects_ru: [],
-    prices: { '1шт': 500, '2шт': 900, '5шт': 2000 },
-    image: path.join(IMG_DIR, 'grinder.jpg'),
-    desc_en: 'Premium 4-piece aluminum grinder. Magnetic lid, sharp teeth, fine mesh screen, and keef catcher. 50mm diameter.',
-    desc_ru: 'Премиум 4-частный алюминиевый грайндер. Магнитная крышка, острые зубья, мелкая сетка, сборщик кифа. 50мм.'
-  },
-  {
-    id: 'dc1', cat: 'flower',
-    name_en: 'Double CK', name_ru: 'Double CK',
-    grade: '4A', type: 'Hybrid', thc: '22-26%',
-    effects_en: ['😌 Relaxed', '💫 Euphoric', '😊 Happy'],
-    effects_ru: ['😌 Расслабление', '💫 Эйфория', '😊 Счастье'],
-    prices: {'1г': 350, '3г': 850, '5г': 1400, '10г': 2600, '50г': 11500},
-    image: path.join(IMG_DIR, 'doubleck.jpg'),
-    desc_en: 'Premium hybrid strain. Balanced effects — relaxing body high with euphoric cerebral uplift.',
-    desc_ru: 'Премиум гибрид. Сбалансированный эффект — расслабление тела с эйфорией.'
-  },
+  // ---- ACCESSORIES ----
+  { id: 'a1', cat: 'accessory', name_en: 'Rolling Papers 50', name_ru: 'Бумаги 50', price: 50, desc_en: 'King size slim · Ultra-thin · Natural gum', desc_ru: 'Кинг сайз слим · Ультратонкие · Натуральная камедь' },
+  { id: 'a2', cat: 'accessory', name_en: 'Rolling Papers 100', name_ru: 'Бумаги 100', price: 80, desc_en: 'King size slim · Bulk pack of 100 sheets · Best value', desc_ru: 'Кинг сайз слим · 100 листов · Выгодно' },
+  { id: 'a3', cat: 'accessory', name_en: 'Grinder Small', name_ru: 'Грайндер малый', price: 250, desc_en: '2-piece aluminum grinder · Compact · Magnetic lid', desc_ru: 'Алюминиевый 2-частный · Компактный · Магнитная крышка' },
+  { id: 'a4', cat: 'accessory', name_en: 'Grinder Premium', name_ru: 'Грайндер премиум', price: 450, desc_en: '4-piece CNC aluminum · Kief catcher · Sharp teeth · Premium finish', desc_ru: '4-частный CNC алюминий · Сборщик кифа · Острые зубья' },
+  { id: 'a5', cat: 'accessory', name_en: 'Glass Pipe', name_ru: 'Стеклянная трубка', price: 300, desc_en: 'Hand-blown borosilicate glass · Unique design · Easy to clean', desc_ru: 'Ручная работа из боросиликата · Уникальный дизайн' },
+  { id: 'a6', cat: 'accessory', name_en: 'Bong Small', name_ru: 'Бонг малый', price: 800, desc_en: '20cm glass bong · Ice notch · Diffuser downstem · Smooth hits', desc_ru: '20см стеклянный бонг · Лёдоприёмник · Диффузор' },
+  { id: 'a7', cat: 'accessory', name_en: 'Bong Large', name_ru: 'Бонг большой', price: 1500, desc_en: '40cm glass bong · Ice catcher · Percolator · Premium glass', desc_ru: '40см с ледоприёмником · Перколятор · Премиум стекло' },
+  { id: 'a8', cat: 'accessory', name_en: 'Lighter 5pcs', name_ru: 'Зажигалки 5шт', price: 50, desc_en: 'Assorted colors · Reliable · Pocket-sized · Set of 5', desc_ru: 'Разные цвета · Надёжные · Карманные · Набор 5шт' },
 ];
 
-module.exports = { categories, products };
+// ===== SIZE GROUP DEFINITIONS =====
+// Maps common strain names to their size variants (by product ID)
+const sizeGroups = {
+  'OG Kush': {
+    ids: ['f1', 'f2', 'f3'],
+    sizes: ['1g', '3g', '5g']
+  },
+  'Amnesia Haze': {
+    ids: ['f4', 'f5'],
+    sizes: ['1g', '3g']
+  },
+  'Northern Lights': {
+    ids: ['f6', 'f7'],
+    sizes: ['1g', '3g']
+  },
+  'Gelato': {
+    ids: ['f9', 'f10'],
+    sizes: ['1g', '3g']
+  },
+  'Thai Stick': {
+    ids: ['f11', 'f12'],
+    sizes: ['1g', '5g']
+  }
+};
+
+// Helper: get the base group name (e.g. "OG Kush") for a product ID
+function getGroupName(productId) {
+  for (const [groupName, group] of Object.entries(sizeGroups)) {
+    if (group.ids.includes(productId)) return groupName;
+  }
+  return null;
+}
+
+// Helper: get all sibling product IDs in the same size group
+function getSiblingIds(productId) {
+  for (const group of Object.values(sizeGroups)) {
+    if (group.ids.includes(productId)) return group.ids;
+  }
+  return [productId];
+}
+
+// Helper: get all sibling product objects in the same size group
+function getSiblingSizes(productId) {
+  const ids = getSiblingIds(productId);
+  return ids.map(id => products.find(p => p.id === id)).filter(Boolean);
+}
+
+// Helper: check if a product is part of a size group
+function isSizeVariant(productId) {
+  return getGroupName(productId) !== null;
+}
+
+// Helper: get the cheapest price in a group (for display)
+function getGroupMinPrice(productId) {
+  const siblings = getSiblingSizes(productId);
+  if (!siblings.length) return null;
+  return Math.min(...siblings.map(s => s.price));
+}
+
+module.exports = { categories, products, sizeGroups, getGroupName, getSiblingIds, getSiblingSizes, isSizeVariant, getGroupMinPrice };
