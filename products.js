@@ -30,7 +30,7 @@ const products = [
     effects_en: ['⚡ Energetic', '🎨 Creative', '☀️ Uplifted'],
     effects_ru: ['⚡ Энергия', '🎨 Креатив', '☀️ Подъём'],
     prices: { '1г': 250, '3.5г': 700, '7г': 1300 },
-    image: null,
+    image: path.join(IMG_DIR, 'amnesia-haze.jpg'),
     desc_en: 'Award-winning sativa-dominant hybrid. Delivers an uplifting, energetic high perfect for daytime creativity and social activities. Citrus and earthy flavors with a hint of sweetness.',
     desc_ru: 'Сатива-доминантный гибрид, победитель Cup. Бодрящий эффект, идеален для дня и творчества. Цитрусово-землистый вкус с ноткой сладости.'
   },
@@ -41,7 +41,7 @@ const products = [
     effects_en: ['😴 Sleepy', '😌 Relaxed', '✨ Tingly'],
     effects_ru: ['😴 Сон', '😌 Расслабление', '✨ Покалывание'],
     prices: { '1г': 200, '3.5г': 550, '7г': 1000 },
-    image: null,
+    image: path.join(IMG_DIR, 'northern-lights.jpg'),
     desc_en: 'An all-time classic indica. Known for its heavy resin production and profoundly relaxing body effects. Sweet and spicy aroma with notes of pine and earth. Perfect for evenings.',
     desc_ru: 'Классическая индика. Известна тяжёлым смолистым покрытием и глубоким расслаблением. Сладко-пряный аромат с сосновыми нотками. Идеальна для вечера.'
   },
@@ -52,7 +52,7 @@ const products = [
     effects_en: ['🎨 Creative', '💫 Euphoric', '😊 Happy'],
     effects_ru: ['🎨 Креатив', '💫 Эйфория', '😊 Счастье'],
     prices: { '1г': 350, '3.5г': 950, '7г': 1700 },
-    image: null,
+    image: path.join(IMG_DIR, 'gelato33.jpg'),
     desc_en: 'Premium dessert strain. Sweet vanilla and lavender aroma with a smooth, balanced high that starts euphoric and settles into deep relaxation. Top shelf quality.',
     desc_ru: 'Премиум десертный сорт. Сладкий аромат ванили и лаванды. Сбалансированный эффект — от эйфории к глубокому расслаблению. Топ качество.'
   },
@@ -63,7 +63,7 @@ const products = [
     effects_en: ['🎯 Focused', '💫 Euphoric', '⚡ Energetic'],
     effects_ru: ['🎯 Фокус', '💫 Эйфория', '⚡ Энергия'],
     prices: { '1г': 450, '3.5г': 1300, '7г': 2300 },
-    image: null,
+    image: path.join(IMG_DIR, 'trop-cherry.jpg'),
     desc_en: 'Exotic top-shelf exclusive. Bursting with cherry terpenes and tropical fruit notes. Potent sativa-leaning effects — focused, energetic, and creatively inspiring.',
     desc_ru: 'Эксклюзивный топ-шельф. Взрыв вишнёвых терпенов и тропических фруктов. Мощная сатива — фокус, энергия, вдохновение.'
   },
@@ -180,7 +180,7 @@ const products = [
     effects_en: ['😌 Relaxed', '💫 Euphoric', '😊 Happy'],
     effects_ru: ['😌 Расслабление', '💫 Эйфория', '😊 Счастье'],
     prices: { '1г': 350, '3.5г': 950, '7г': 1700 },
-    image: null,
+    image: path.join(IMG_DIR, 'doubleck.jpg'),
     desc_en: 'Premium hybrid strain. Balanced effects — relaxing body high with euphoric cerebral uplift.',
     desc_ru: 'Премиум гибрид. Сбалансированный эффект — расслабление тела с эйфорией.'
   },
