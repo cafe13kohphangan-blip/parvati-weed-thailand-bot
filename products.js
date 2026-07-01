@@ -3,11 +3,11 @@ const path = require('path');
 const IMG_DIR = path.join(__dirname, 'images');
 
 const categories = [
-  { id: 'flower',    name_en: '🌿 Flower',      name_ru: '🌿 Шишки',    emoji: '🌿' },
-  { id: 'edibles',   name_en: '🍪 Edibles',     name_ru: '🍪 Эдиблс',   emoji: '🍪' },
-  { id: 'prerolls',  name_en: '🚬 Pre-rolls',   name_ru: '🚬 Готовые косяки', emoji: '🚬' },
-  { id: 'kratom',    name_en: '🌱 Kratom',      name_ru: '🌱 Кратом',   emoji: '🌱' },
-  { id: 'accessory', name_en: '🔧 Accessories', name_ru: '🔧 Аксессуары', emoji: '🔧' },
+  { id: 'flower',    name_en: '🌿 Flower',      name_ru: '🌿 Шишки',      name_th: '🌿 ดอก',     emoji: '🌿' },
+  { id: 'edibles',   name_en: '🍪 Edibles',     name_ru: '🍪 Эдиблс',     name_th: '🍪 อาหาร',   emoji: '🍪' },
+  { id: 'prerolls',  name_en: '🚬 Pre-rolls',   name_ru: '🚬 Готовые косяки', name_th: '🚬 จอยต์', emoji: '🚬' },
+  { id: 'kratom',    name_en: '🌱 Kratom',      name_ru: '🌱 Кратом',     name_th: '🌱 กระท่อม', emoji: '🌱' },
+  { id: 'accessory', name_en: '🔧 Accessories', name_ru: '🔧 Аксессуары', name_th: '🔧 อุปกรณ์',  emoji: '🔧' },
 ];
 
 const products = [
