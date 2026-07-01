@@ -112,7 +112,7 @@ const products = [
     effects_en: ['😌 Relaxed', '😊 Happy'],
     effects_ru: ['😌 Расслабление', '😊 Счастье'],
     prices: { '1шт': 100, '5шт': 450 },
-    image: null,
+    image: path.join(IMG_DIR, 'preroll-pack.jpg'),
     desc_en: 'Ready-to-smoke mixed strain joint with glass tip. Smooth burn, consistent quality. Perfect for on-the-go.',
     desc_ru: 'Готовый косяк из микс сортов со стеклянным наконечником. Ровное горение. Идеален для прогулки.'
   },
@@ -123,7 +123,7 @@ const products = [
     effects_en: ['💫 Euphoric', '🫠 Body High'],
     effects_ru: ['💫 Эйфория', '🫠 Телесный'],
     prices: { '1шт': 200, '5шт': 900 },
-    image: null,
+    image: path.join(IMG_DIR, 'preroll-premium.jpg'),
     desc_en: 'King size premium joint. Top shelf flower, organic paper, glass tip. The ultimate ready-to-smoke experience.',
     desc_ru: 'Кинг сайз премиум косяк. Топ сорт, органическая бумага, стеклянный наконечник. Лучший готовый джоинт.'
   },
@@ -136,7 +136,7 @@ const products = [
     effects_en: ['⚡ Energy', '🎯 Focus', '😌 Relaxed'],
     effects_ru: ['⚡ Энергия', '🎯 Фокус', '😌 Расслабление'],
     prices: { '50г': 300, '100г': 500, '500г': 2000 },
-    image: null,
+    image: path.join(IMG_DIR, 'kratom-powder.jpg'),
     desc_en: 'Premium Thai kratom powder. Available in Red, White, and Green vein strains. Lab tested for purity and alkaloid content.',
     desc_ru: 'Премиум тайский порошок кратом. Красный, Белый, Зелёный сорта. Лабораторное тестирование.'
   },
@@ -147,7 +147,7 @@ const products = [
     effects_en: ['⚡ Energy', '😊 Mood Boost'],
     effects_ru: ['⚡ Энергия', '😊 Настроение'],
     prices: { '30шт': 450, '100шт': 1200 },
-    image: null,
+    image: path.join(IMG_DIR, 'kratom-caps.jpg'),
     desc_en: 'Convenient pre-measured kratom capsules. 500mg each. Easy to take anywhere — no measuring, no taste.',
     desc_ru: 'Удобные капсулы кратома. По 500мг каждая. Легко принять где угодно — без вкуса и измерения.'
   },
@@ -159,7 +159,7 @@ const products = [
     grade: 'A', type: 'Accessory', thc: null,
     effects_en: [], effects_ru: [],
     prices: { '1пачка': 50 },
-    image: null,
+    image: path.join(IMG_DIR, 'papers.jpg'),
     desc_en: 'King size organic hemp rolling papers. Slow, even burn. No added chemicals. 50 per pack.',
     desc_ru: 'Кинг сайз бумаги из органической конопли. Медленное ровное горение. Без химии. 50 шт.'
   },
@@ -169,7 +169,7 @@ const products = [
     grade: 'A', type: 'Accessory', thc: null,
     effects_en: [], effects_ru: [],
     prices: { '1шт': 350 },
-    image: null,
+    image: path.join(IMG_DIR, 'grinder.jpg'),
     desc_en: 'Premium 4-piece aluminum grinder. Magnetic lid, sharp teeth, fine mesh screen, and keef catcher. 50mm diameter.',
     desc_ru: 'Премиум 4-частный алюминиевый грайндер. Магнитная крышка, острые зубья, мелкая сетка, сборщик кифа. 50мм.'
   },
