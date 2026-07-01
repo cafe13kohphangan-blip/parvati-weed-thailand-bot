@@ -562,9 +562,9 @@ async function showCart(chatId, ctx, editMode = false) {
     ]).reply_markup;
 
     if (editMode) {
-      await ctx.editMessageText(msg, { parse_mode: 'Markdown', reply_markup });
+      await ctx.editMessageText(msg, { parse_mode: 'Markdown', reply_markup: replyMarkup });
     } else {
-      await ctx.reply(msg, { parse_mode: 'Markdown', reply_markup });
+      await ctx.reply(msg, { parse_mode: 'Markdown', reply_markup: replyMarkup });
     }
     return;
   }
